@@ -1,0 +1,15 @@
+{
+  "name": "Zombicide Companion",
+  "short_name": "ZC Companion",
+  "description": "Companion app per Zombicide Black Plague",
+  "start_url": "/zombicide-ca/",
+  "scope": "/zombicide-ca/",
+  "display": "standalone",
+  "background_color": "#080003",
+  "theme_color": "#1a0005",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "img/icon.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "img/icon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

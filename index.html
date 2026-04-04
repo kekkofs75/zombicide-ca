@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1a0005">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="img/icon.png">
+<title>Zombicide Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--blood:#8b0000;--blood-light:#c0392b;--fire:#e8500a;--gold:#c9a84c;--gold-light:#f0d080;--darker:#080003;--blue-skill:#3a7cc2;--yellow-skill:#d4a820;--orange-skill:#d4660a;--red-skill:#b01010;--text-light:#f5e8d0;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-light);min-height:100vh;background-image:radial-gradient(ellipse at top,#3a0010 0%,#0d0005 60%);}
+.app-header{background:linear-gradient(180deg,#1a0008 0%,transparent 100%);padding:14px 20px 10px;text-align:center;border-bottom:1px solid rgba(200,80,0,0.3);position:relative;}
+.app-header::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--fire),transparent);}
+.app-title{font-family:'Cinzel',serif;font-size:20px;font-weight:900;color:var(--gold-light);text-shadow:0 0 20px rgba(232,80,10,0.8);letter-spacing:2px;}
+.app-subtitle{font-family:'Cinzel',serif;font-size:10px;color:var(--fire);letter-spacing:4px;margin-top:2px;}
+.screen{display:none;padding:20px 16px;min-height:calc(100vh - 72px);}
+.screen.active{display:block;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.home-grid{display:flex;flex-direction:column;gap:12px;margin-top:8px;}
+.home-btn{background:linear-gradient(135deg,rgba(42,26,16,0.9),rgba(20,8,5,0.95));border:1px solid rgba(201,168,76,0.25);border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;width:100%;text-align:left;color:inherit;transition:border-color 0.2s;}
+.home-btn:not(:disabled):active{border-color:var(--gold);}
+.home-btn:disabled{opacity:0.4;cursor:default;}
+.home-btn-text{flex:1;}
+.home-btn-title{font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:var(--gold-light);letter-spacing:1px;}
+.home-btn-desc{font-size:12px;color:rgba(245,232,208,0.55);margin-top:3px;line-height:1.4;}
+.home-btn-badge{font-family:'Cinzel',serif;font-size:9px;color:var(--fire);letter-spacing:2px;border:1px solid rgba(232,80,10,0.4);padding:3px 8px;border-radius:10px;flex-shrink:0;}
+.section-title{font-family:'Cinzel',serif;font-size:13px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.section-title::before,.section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.4));}
+.section-title::after{background:linear-gradient(90deg,rgba(201,168,76,0.4),transparent);}
+.back-btn{display:flex;align-items:center;gap:8px;font-family:'Cinzel',serif;font-size:11px;color:var(--gold);letter-spacing:2px;cursor:pointer;margin-bottom:18px;border:none;background:none;padding:0;}
+.info-box{background:rgba(139,0,0,0.15);border:1px solid rgba(139,0,0,0.3);border-radius:10px;padding:12px 16px;font-size:13px;color:rgba(245,232,208,0.7);margin-bottom:16px;line-height:1.6;}
+.btn-primary{width:100%;padding:16px;background:linear-gradient(135deg,var(--blood),var(--blood-light));border:1px solid rgba(200,80,0,0.5);border-radius:10px;color:var(--text-light);font-family:'Cinzel',serif;font-size:14px;font-weight:700;letter-spacing:3px;cursor:pointer;margin-top:8px;text-transform:uppercase;box-shadow:0 4px 20px rgba(139,0,0,0.4);}
+.btn-primary:disabled{opacity:0.4;cursor:default;}
+.btn-primary:not(:disabled):active{transform:scale(0.98);}
+.btn-secondary{width:100%;padding:13px;background:transparent;border:1px solid rgba(201,168,76,0.3);border-radius:10px;color:var(--gold);font-family:'Cinzel',serif;font-size:12px;letter-spacing:2px;cursor:pointer;margin-top:10px;}
+.btn-secondary:active{background:rgba(201,168,76,0.1);}
+.search-bar{width:100%;padding:12px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:10px;color:var(--text-light);font-family:'Crimson Text',serif;font-size:15px;margin-bottom:12px;outline:none;}
+.search-bar:focus{border-color:rgba(201,168,76,0.5);}
+.setup-group{margin-bottom:22px;}
+.setup-label{font-family:'Cinzel',serif;font-size:12px;color:var(--gold);letter-spacing:2px;margin-bottom:10px;display:block;}
+.number-control{display:flex;align-items:center;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.25);border-radius:8px;overflow:hidden;width:fit-content;}
+.num-btn{width:48px;height:48px;background:rgba(201,168,76,0.1);border:none;color:var(--gold-light);font-size:22px;cursor:pointer;font-family:'Cinzel',serif;}
+.num-btn:active{background:rgba(201,168,76,0.3);}
+.num-display{width:56px;text-align:center;font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--text-light);background:transparent;border:none;border-left:1px solid rgba(201,168,76,0.2);border-right:1px solid rgba(201,168,76,0.2);}
+.sets-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.set-chip{padding:8px 14px;border-radius:20px;border:1px solid rgba(201,168,76,0.3);background:rgba(255,255,255,0.04);color:var(--text-light);font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;cursor:pointer;}
+.set-chip.active{background:rgba(201,168,76,0.2);border-color:var(--gold);color:var(--gold-light);}
+.draft-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:12px 16px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(201,168,76,0.15);}
+.player-indicator{font-family:'Cinzel',serif;font-size:13px;color:var(--gold-light);}
+.player-indicator span{color:var(--fire);font-weight:700;}
+.picks-remaining{font-family:'Cinzel',serif;font-size:11px;color:rgba(245,232,208,0.6);letter-spacing:1px;}
+.survivors-grid{display:flex;flex-direction:column;gap:12px;margin-bottom:90px;}
+.survivor-card{background:linear-gradient(135deg,rgba(42,26,16,0.9),rgba(20,8,5,0.95));border:1px solid rgba(201,168,76,0.2);border-radius:12px;overflow:hidden;display:flex;cursor:pointer;position:relative;}
+.survivor-card.selected{border-color:var(--gold);box-shadow:0 0 20px rgba(201,168,76,0.3);}
+.survivor-card.selected::before{content:'✓';position:absolute;top:8px;right:8px;width:24px;height:24px;background:var(--gold);color:#000;border-radius:50%;font-size:13px;font-weight:900;line-height:24px;text-align:center;z-index:2;}
+.free-pick-card{background:linear-gradient(135deg,rgba(20,8,5,0.7),rgba(10,3,2,0.8));border:2px dashed rgba(201,168,76,0.3);border-radius:12px;overflow:hidden;display:flex;cursor:pointer;position:relative;}
+.free-pick-avatar-placeholder{width:90px;min-height:110px;flex-shrink:0;background:rgba(0,0,0,0.35);border-right:1px dashed rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:center;font-size:32px;opacity:0.55;}
+.free-pick-body{flex:1;padding:10px 12px;display:flex;flex-direction:column;justify-content:center;gap:6px;}
+.free-pick-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--gold-light);}
+.free-pick-sub{font-family:'Cinzel',serif;font-size:10px;color:rgba(245,232,208,0.5);line-height:1.5;}
+.free-pick-card.filled{background:linear-gradient(135deg,rgba(42,26,16,0.9),rgba(20,8,5,0.95));border:1px solid var(--gold);box-shadow:0 0 20px rgba(201,168,76,0.3);cursor:default;}
+.free-pick-card.filled::after{content:'★ SCELTA LIBERA';position:absolute;bottom:0;left:0;right:0;background:rgba(201,168,76,0.15);border-top:1px solid rgba(201,168,76,0.2);font-family:'Cinzel',serif;font-size:9px;color:var(--gold);letter-spacing:2px;text-align:center;padding:3px 0;}
+.card-avatar{width:90px;min-height:110px;object-fit:cover;object-position:top center;flex-shrink:0;cursor:pointer;}
+.card-body{flex:1;padding:10px 12px;display:flex;flex-direction:column;justify-content:space-between;}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.card-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:var(--gold-light);line-height:1;}
+.card-number{font-family:'Cinzel',serif;font-size:11px;color:var(--gold-light);letter-spacing:1px;}
+.card-set{font-size:10px;color:var(--fire);letter-spacing:1px;margin-top:2px;font-style:italic;}
+.skills-preview{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+.skill-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.skill-dot.blue{background:var(--blue-skill);box-shadow:0 0 4px var(--blue-skill);}
+.skill-dot.yellow{background:var(--yellow-skill);box-shadow:0 0 4px var(--yellow-skill);}
+.skill-dot.orange{background:var(--orange-skill);box-shadow:0 0 4px var(--orange-skill);}
+.skill-dot.red{background:var(--red-skill);box-shadow:0 0 4px var(--red-skill);}
+.card-expand-btn{margin-top:8px;font-size:11px;color:rgba(201,168,76,0.6);font-family:'Cinzel',serif;cursor:pointer;border:none;background:none;padding:0;text-align:left;}
+.change-btn{margin-top:8px;font-size:11px;color:#ff7070;font-family:'Cinzel',serif;cursor:pointer;border:1px solid rgba(200,60,60,0.5);background:rgba(200,60,60,0.15);padding:6px 12px;border-radius:6px;display:block;width:100%;text-align:center;}
+.change-btn:active{background:rgba(200,60,60,0.3);}
+.skills-expanded{padding:10px 12px 12px;border-top:1px solid rgba(201,168,76,0.1);display:none;}
+.skills-expanded.open{display:block;}
+.skills-columns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.skill-item{display:flex;align-items:center;gap:6px;cursor:pointer;padding:3px 0;}
+.skill-flame{width:12px;height:14px;border-radius:50% 50% 40% 40%;flex-shrink:0;}
+.skill-flame.blue{background:radial-gradient(var(--blue-skill),#1a3a6e);}
+.skill-flame.yellow{background:radial-gradient(var(--yellow-skill),#7a5a00);}
+.skill-flame.orange{background:radial-gradient(var(--orange-skill),#7a3000);}
+.skill-flame.red{background:radial-gradient(var(--red-skill),#5a0000);}
+.skill-name{font-size:11px;color:var(--text-light);line-height:1.3;}
+.draft-actions{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(0deg,var(--darker) 75%,transparent);padding:16px 16px 24px;}
+.player-summary{background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.15);border-radius:12px;padding:16px;margin-bottom:12px;}
+.player-summary-title{font-family:'Cinzel',serif;font-size:13px;color:var(--gold);letter-spacing:2px;margin-bottom:12px;}
+.summary-survivors{display:flex;gap:12px;flex-wrap:wrap;}
+.summary-card{flex:1;text-align:center;min-width:70px;}
+.summary-avatar{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:top;border:2px solid rgba(201,168,76,0.4);margin:0 auto 6px;display:block;cursor:pointer;}
+.summary-name{font-family:'Cinzel',serif;font-size:14px;color:var(--gold-light);letter-spacing:1px;margin-bottom:2px;}
+.summary-number{font-family:'Cinzel',serif;font-size:12px;color:var(--gold-light);letter-spacing:1px;}
+.summary-set{font-family:'Cinzel',serif;font-size:10px;color:var(--fire);letter-spacing:1px;margin-top:2px;font-style:italic;}
+.capacita-item{background:linear-gradient(135deg,rgba(42,26,16,0.9),rgba(20,8,5,0.95));border:1px solid rgba(201,168,76,0.15);border-radius:10px;margin-bottom:8px;overflow:hidden;cursor:pointer;}
+.capacita-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;}
+.capacita-name{font-family:'Cinzel',serif;font-size:13px;color:var(--gold-light);letter-spacing:1px;}
+.capacita-arrow{font-size:14px;color:var(--gold);flex-shrink:0;margin-left:8px;}
+.capacita-body{padding:0 16px 14px;}
+.capacita-en{font-size:13px;color:var(--text-light);line-height:1.6;font-style:italic;margin-bottom:10px;}
+.capacita-it{font-size:13px;color:rgba(245,232,208,0.65);line-height:1.6;padding-top:10px;border-top:1px solid rgba(255,255,255,0.07);}
+.priority-note{background:rgba(139,0,0,0.15);border:1px solid rgba(139,0,0,0.3);border-radius:10px;padding:12px 16px;font-size:13px;color:rgba(245,232,208,0.8);margin-bottom:16px;line-height:1.6;font-style:italic;}
+.priority-list{display:flex;flex-direction:column;gap:8px;}
+.priority-row{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(42,26,16,0.9),rgba(20,8,5,0.95));border:1px solid rgba(201,168,76,0.15);border-radius:10px;padding:12px 16px;}
+.priority-num{font-family:'Cinzel',serif;font-size:22px;font-weight:900;color:var(--blood-light);min-width:32px;text-align:center;flex-shrink:0;}
+.priority-name{font-family:'Cinzel',serif;font-size:14px;color:var(--gold-light);letter-spacing:1px;}
+.rules-card{background:linear-gradient(135deg,rgba(42,26,16,0.9),rgba(20,8,5,0.95));border:1px solid rgba(201,168,76,0.2);border-radius:12px;margin-bottom:10px;}
+.rules-card-header{font-family:'Cinzel',serif;font-size:12px;color:var(--gold);letter-spacing:2px;padding:10px 14px;background:rgba(0,0,0,0.2);border-bottom:1px solid rgba(201,168,76,0.1);border-radius:12px 12px 0 0;}
+.rules-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:4px 0;}
+.rules-table{border-collapse:collapse;min-width:460px;width:100%;}
+.rules-table th{font-family:'Cinzel',serif;font-size:10px;color:var(--gold);letter-spacing:1px;text-align:left;padding:8px 12px;border-bottom:1px solid rgba(201,168,76,0.2);background:rgba(0,0,0,0.2);white-space:nowrap;}
+.rules-table td{font-size:12px;color:var(--text-light);padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.05);line-height:1.4;}
+.rules-table tr:last-child td{border-bottom:none;}
+.rules-table td:first-child{font-family:'Cinzel',serif;font-size:12px;color:var(--gold-light);font-weight:700;white-space:nowrap;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:100;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;animation:fadeIn 0.2s;}
+.modal-sheet{background:linear-gradient(180deg,#1e0c08,#0d0005);border:1px solid rgba(201,168,76,0.3);border-bottom:none;border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;animation:slideUp 0.3s ease;position:relative;}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:40px;height:4px;background:rgba(201,168,76,0.3);border-radius:2px;margin:0 auto 20px;}
+.modal-skill-name{font-family:'Cinzel',serif;font-size:18px;color:var(--gold-light);margin-bottom:6px;}
+.modal-level-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;margin-bottom:16px;}
+.modal-level-badge.blue{background:rgba(58,124,194,0.2);color:#7ab8ff;border:1px solid rgba(58,124,194,0.4);}
+.modal-level-badge.yellow{background:rgba(212,168,32,0.2);color:#ffd96e;border:1px solid rgba(212,168,32,0.4);}
+.modal-level-badge.orange{background:rgba(212,102,10,0.2);color:#ffaa60;border:1px solid rgba(212,102,10,0.4);}
+.modal-level-badge.red{background:rgba(176,16,16,0.2);color:#ff7070;border:1px solid rgba(176,16,16,0.4);}
+.modal-desc-en{font-size:15px;color:var(--text-light);line-height:1.7;margin-bottom:12px;font-style:italic;}
+.modal-desc-it{font-size:14px;color:rgba(245,232,208,0.65);line-height:1.7;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);}
+.modal-close{position:absolute;top:20px;right:20px;width:32px;height:32px;background:rgba(255,255,255,0.08);border:none;border-radius:50%;color:var(--text-light);font-size:18px;cursor:pointer;line-height:32px;text-align:center;}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div style="display:flex;align-items:center;justify-content:space-between;max-width:480px;margin:0 auto;">
+    <img src="img/icon.png" alt="" style="width:44px;height:44px;object-fit:contain;border-radius:50%;border:1px solid rgba(201,168,76,0.3);filter:drop-shadow(0 0 8px rgba(232,80,10,0.8));">
+    <div style="flex:1;text-align:center;"><div class="app-title">ZOMBICIDE</div><div class="app-subtitle">COMPANION</div></div>
+    <img src="img/icon.png" alt="" style="width:44px;height:44px;object-fit:contain;border-radius:50%;border:1px solid rgba(201,168,76,0.3);filter:drop-shadow(0 0 8px rgba(232,80,10,0.8));transform:scaleX(-1);">
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div class="section-title" style="margin-top:8px">Benvenuto</div>
+  <div class="home-grid">
+    <button class="home-btn" onclick="showScreen('screen-setup')">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="10" cy="14" r="5" fill="#c9a84c" opacity="0.7"/><path d="M3 38 Q3 28 10 28 Q17 28 17 38" fill="#c9a84c" opacity="0.7"/><circle cx="34" cy="14" r="5" fill="#c9a84c" opacity="0.7"/><path d="M27 38 Q27 28 34 28 Q41 28 41 38" fill="#c9a84c" opacity="0.7"/><circle cx="22" cy="11" r="6" fill="#f0d080"/><path d="M13 38 Q13 26 22 26 Q31 26 31 38" fill="#f0d080"/></svg>
+      <div class="home-btn-text"><div class="home-btn-title">Survivor Draft</div><div class="home-btn-desc">Pesca casuale dei Sopravvissuti per la tua partita</div></div>
+    </button>
+    <button class="home-btn" onclick="showScreen('screen-capacita')">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M22 6 C16 14 12 19 14 26 C15 31 18 35 22 36 C26 35 29 31 30 26 C32 19 28 14 22 6Z" fill="#c9a84c" opacity="0.7"/><path d="M22 12 C18 18 16 22 17 27 C18 31 20 34 22 34 C24 34 26 31 27 27 C28 22 26 18 22 12Z" fill="#f0d080"/><path d="M22 18 C20 22 19 25 20 28 C21 31 22 32 22 32 C22 32 23 31 24 28 C25 25 24 22 22 18Z" fill="white" opacity="0.7"/></svg>
+      <div class="home-btn-text"><div class="home-btn-title">Capacità</div><div class="home-btn-desc">Cerca e consulta tutte le descrizioni delle abilità</div></div>
+    </button>
+    <button class="home-btn" onclick="showScreen('screen-priorita')">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="22" r="16" stroke="#c9a84c" stroke-width="2" opacity="0.7"/><circle cx="22" cy="22" r="9" stroke="#f0d080" stroke-width="2"/><circle cx="22" cy="22" r="3" fill="#8b0000"/><line x1="22" y1="4" x2="22" y2="11" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/><line x1="22" y1="33" x2="22" y2="40" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="22" x2="11" y2="22" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/><line x1="33" y1="22" x2="40" y2="22" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/></svg>
+      <div class="home-btn-text"><div class="home-btn-title">Priorità</div><div class="home-btn-desc">Ordine di priorità dei bersagli a distanza</div></div>
+    </button>
+    <button class="home-btn" onclick="showScreen('screen-regole')">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="8" y="6" width="14" height="32" rx="2" fill="#c9a84c" opacity="0.6"/><rect x="22" y="6" width="14" height="32" rx="2" fill="#f0d080" opacity="0.8"/><rect x="20" y="6" width="4" height="32" fill="#8b0000" opacity="0.8"/><line x1="25" y1="14" x2="33" y2="14" stroke="#1a0008" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/><line x1="25" y1="19" x2="33" y2="19" stroke="#1a0008" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/><line x1="25" y1="24" x2="33" y2="24" stroke="#1a0008" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/><line x1="25" y1="29" x2="30" y2="29" stroke="#1a0008" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/></svg>
+      <div class="home-btn-text"><div class="home-btn-title">Regole Rapide</div><div class="home-btn-desc">Consulta le regole durante la partita</div></div>
+    </button>
+    <button class="home-btn" disabled>
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="12" y="10" width="20" height="22" rx="6" fill="#c9a84c" opacity="0.7"/><line x1="16" y1="17" x2="20" y2="21" stroke="#080003" stroke-width="2" stroke-linecap="round"/><line x1="20" y1="17" x2="16" y2="21" stroke="#080003" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="19" r="3" fill="#080003"/><rect x="15" y="26" width="14" height="4" rx="1" fill="#080003"/><rect x="17" y="26" width="3" height="4" fill="#c9a84c" opacity="0.7"/><rect x="22" y="26" width="3" height="4" fill="#c9a84c" opacity="0.7"/><rect x="19" y="32" width="6" height="5" rx="2" fill="#c9a84c" opacity="0.5"/></svg>
+      <div class="home-btn-text"><div class="home-btn-title">Bestiario</div><div class="home-btn-desc">Zombie, Abomini, Necromanti</div></div>
+      <div class="home-btn-badge">PRESTO</div>
+    </button>
+  </div>
+</div>
+
+<!-- SETUP DRAFT -->
+<div class="screen" id="screen-setup">
+  <button class="back-btn" onclick="showScreen('screen-home')">← HOME</button>
+  <div class="section-title">Configurazione Draft</div>
+  <div class="setup-group"><span class="setup-label">NUMERO GIOCATORI</span><div class="number-control"><button class="num-btn" onclick="adjust('players',-1)">−</button><div class="num-display" id="display-players">3</div><button class="num-btn" onclick="adjust('players',1)">+</button></div></div>
+  <div class="setup-group"><span class="setup-label">SOPRAVVISSUTI PESCATI A TESTA</span><div class="number-control"><button class="num-btn" onclick="adjust('draw',-1)">−</button><div class="num-display" id="display-draw">3</div><button class="num-btn" onclick="adjust('draw',1)">+</button></div></div>
+  <div class="setup-group"><span class="setup-label">SOPRAVVISSUTI TENUTI A TESTA</span><div class="number-control"><button class="num-btn" onclick="adjust('keep',-1)">−</button><div class="num-display" id="display-keep">2</div><button class="num-btn" onclick="adjust('keep',1)">+</button></div></div>
+  <div class="setup-group"><span class="setup-label">SET INCLUSI</span><div class="sets-grid" id="sets-grid"></div></div>
+  <button class="btn-primary" onclick="startDraft()">⚔ INIZIA IL DRAFT</button>
+</div>
+
+<!-- DRAFT -->
+<div class="screen" id="screen-draft">
+  <div class="draft-header">
+    <div><div class="player-indicator">Giocatore <span id="current-player-num">1</span></div><div class="picks-remaining" id="picks-info">Scegli</div></div>
+    <div style="text-align:right"><div class="player-indicator" style="font-size:11px;color:rgba(245,232,208,0.5)">Turno</div><div class="player-indicator"><span id="round-display">1</span> / <span id="total-rounds">3</span></div></div>
+  </div>
+  <div class="survivors-grid" id="draft-grid"></div>
+  <div class="draft-actions"><button class="btn-primary" id="btn-confirm-picks" onclick="confirmPicks()" disabled>CONFERMA SCELTA</button></div>
+</div>
+
+<!-- FREE PICK -->
+<div class="screen" id="screen-freepick">
+  <button class="back-btn" onclick="cancelFreePick()">← INDIETRO</button>
+  <div class="section-title">Scelta Libera</div>
+  <div class="info-box">Scegli un Sopravvissuto dalla collezione. Quelli già presi non sono disponibili.</div>
+  <div id="fp-set-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div>
+  <input class="search-bar" type="text" placeholder="Cerca per nome..." oninput="filterFreePick(this.value)" id="free-pick-search">
+  <div class="survivors-grid" id="freepick-grid"></div>
+  <div class="draft-actions"><button class="btn-primary" id="btn-confirm-free" onclick="confirmFreePick()" disabled>CONFERMA</button></div>
+</div>
+
+<!-- SUMMARY -->
+<div class="screen" id="screen-summary">
+  <div class="section-title">Squadra Finale</div>
+  <div id="summary-content"></div>
+  <button class="btn-primary" onclick="restartDraft()" style="margin-top:20px">⚔ NUOVA PARTITA</button>
+  <button class="btn-secondary" onclick="showScreen('screen-home')">← HOME</button>
+</div>
+
+<!-- CAPACITÀ -->
+<div class="screen" id="screen-capacita">
+  <button class="back-btn" onclick="showScreen('screen-home')">← HOME</button>
+  <div class="section-title">Capacità</div>
+  <input class="search-bar" type="text" placeholder="Cerca una capacità..." oninput="renderCapacita(this.value)" id="capacita-search">
+  <div id="capacita-list"></div>
+</div>
+
+<!-- PRIORITÀ -->
+<div class="screen" id="screen-priorita">
+  <button class="back-btn" onclick="showScreen('screen-home')">← HOME</button>
+  <div class="section-title">Priorità Bersagli</div>
+  <div class="priority-note">⚠ Quando più bersagli condividono la stessa priorità, i giocatori decidono quali eliminare per primi.</div>
+  <div class="priority-list">
+    <div class="priority-row"><div class="priority-num">1</div><div class="priority-name">Survivor</div></div>
+    <div class="priority-row"><div class="priority-num">2</div><div class="priority-name">Dragon (any kind)</div></div>
+    <div class="priority-row"><div class="priority-num">3</div><div class="priority-name">Murder of Crowz</div></div>
+    <div class="priority-row" style="border-top:none;border-radius:0 0 10px 10px;margin-top:-8px"><div class="priority-num" style="color:transparent">3</div><div class="priority-name">Swarm of Ratz</div></div>
+    <div class="priority-row" style="margin-top:8px"><div class="priority-num">4</div><div class="priority-name">Walker (any kind)</div></div>
+    <div class="priority-row"><div class="priority-num">5</div><div class="priority-name">Fatty (any kind)</div></div>
+    <div class="priority-row" style="border-top:none;border-radius:0 0 10px 10px;margin-top:-8px"><div class="priority-num" style="color:transparent">5</div><div class="priority-name">Abomination (any kind)</div></div>
+    <div class="priority-row" style="margin-top:8px"><div class="priority-num">6</div><div class="priority-name">Runner (any kind)</div></div>
+    <div class="priority-row"><div class="priority-num">7</div><div class="priority-name">Zombie Wolfz</div></div>
+    <div class="priority-row"><div class="priority-num">8</div><div class="priority-name">Necromancer (any kind)</div></div>
+  </div>
+</div>
+
+<!-- REGOLE RAPIDE -->
+<div class="screen" id="screen-regole">
+  <button class="back-btn" onclick="showScreen('screen-home')">← HOME</button>
+  <div class="section-title">Regole Rapide</div>
+  <div class="rules-card">
+    <div class="rules-card-header">ZONA ALLAGATA — USCITA</div>
+    <div class="rules-scroll">
+      <table class="rules-table">
+        <tr><th>Attore</th><th>Verso altra Zona Allagata</th><th>Attraverso una Riva</th><th>Attraverso un Argine</th></tr>
+        <tr><td>Sopravvissuto</td><td>+1 Azione</td><td>Nessuna penalità</td><td>+1 Azione</td></tr>
+        <tr><td>Zombie</td><td>Nessuna penalità</td><td>Nessuna penalità</td><td>Non può farlo</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Skill -->
+<div class="modal-overlay" id="skill-modal" onclick="if(event.target.id==='skill-modal')closeSkillModal()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeSkillModal()">×</button>
+    <div class="modal-skill-name" id="modal-skill-name"></div>
+    <div id="modal-level-badge" class="modal-level-badge"></div>
+    <div class="modal-desc-en" id="modal-desc-en"></div>
+    <div class="modal-desc-it" id="modal-desc-it"></div>
+  </div>
+</div>
+
+<!-- MODAL Card -->
+<div class="modal-overlay" id="card-modal" onclick="if(event.target.id==='card-modal')closeCardModal()">
+  <div class="modal-sheet" style="padding:16px 12px 32px">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeCardModal()">×</button>
+    <div style="margin-top:8px;text-align:center">
+      <img id="card-modal-img" src="" alt="" style="max-width:100%;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.6)">
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+function showScreen(id,pushState=true){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);if(id==='screen-capacita'){document.getElementById('capacita-search').value='';renderCapacita('');}if(pushState)history.pushState({screen:id},'','');}
+window.addEventListener('popstate',e=>{const cur=document.querySelector('.screen.active');if(!cur)return;if(cur.id==='screen-home'){history.pushState({screen:'screen-home'},'','');return;}if(cur.id==='screen-freepick'){showScreen('screen-draft',false);return;}showScreen('screen-home',false);});
+history.pushState({screen:'screen-home'},'','');
+
+function openSkillModal(e,name,level){e.stopPropagation();document.getElementById('modal-skill-name').textContent=name;const labels={blue:'Livello Blu',yellow:'Livello Giallo',orange:'Livello Arancione',red:'Livello Rosso'};const badge=document.getElementById('modal-level-badge');badge.className='modal-level-badge '+level;badge.textContent=labels[level]||level;const desc=SKILL_DESCRIPTIONS[name];document.getElementById('modal-desc-en').textContent=desc?desc.en:'— Descrizione non ancora caricata —';document.getElementById('modal-desc-it').textContent=desc?desc.it:'— Description not yet loaded —';document.getElementById('skill-modal').classList.add('open');}
+function closeSkillModal(){document.getElementById('skill-modal').classList.remove('open');}
+function openCardModal(e,id){e.stopPropagation();const s=SURVIVORS.find(x=>x.id===id);if(!s)return;document.getElementById('card-modal-img').src=s.card;document.getElementById('card-modal').classList.add('open');}
+function closeCardModal(){document.getElementById('card-modal').classList.remove('open');}
+
+function renderCapacita(filter){const f=(filter||'').toLowerCase().trim();const list=document.getElementById('capacita-list');const entries=Object.entries(SKILL_DESCRIPTIONS).filter(([n])=>n.toLowerCase().includes(f)).sort((a,b)=>a[0].localeCompare(b[0]));if(!entries.length){list.innerHTML='<div style="text-align:center;color:rgba(245,232,208,0.4);padding:20px;font-family:Cinzel,serif;font-size:12px">Nessuna capacità trovata</div>';return;}list.innerHTML=entries.map(([name,desc])=>{const sid=name.replace(/[^a-zA-Z0-9]/g,'_');return`<div class="capacita-item" onclick="toggleCapacita('${sid}')"><div class="capacita-header"><span class="capacita-name">${name}</span><span class="capacita-arrow" id="arr-${sid}">▸</span></div><div class="capacita-body" id="cap-${sid}" style="display:none"><div class="capacita-en">${desc.en}</div><div class="capacita-it">${desc.it}</div></div></div>`;}).join('');}
+function toggleCapacita(sid){const body=document.getElementById('cap-'+sid);const arr=document.getElementById('arr-'+sid);if(!body)return;const open=body.style.display==='none';body.style.display=open?'block':'none';if(arr)arr.textContent=open?'▾':'▸';}
+
+const S={players:3,draw:3,keep:2,activeSets:[],availableSets:[],pool:[],takenIds:new Set(),currentPlayerIndex:0,currentDraw:[],selectedIds:[],freePickSurvivor:null,playerResults:[],_tempFreePickId:null,_fpSetFilter:null};
+function encodeId(s){return s.replace(/[^a-zA-Z0-9]/g,'_');}
+function initSets(){const sets=[...new Set(SURVIVORS.map(s=>s.set))];S.availableSets=sets;S.activeSets=[...sets];document.getElementById('sets-grid').innerHTML=sets.map(s=>`<div class="set-chip active" id="set-${encodeId(s)}" onclick="toggleSet('${encodeId(s)}')">${s}</div>`).join('');}
+function toggleSet(id){const name=S.availableSets.find(s=>encodeId(s)===id);if(!name)return;const i=S.activeSets.indexOf(name);if(i>-1){if(S.activeSets.length>1)S.activeSets.splice(i,1);}else S.activeSets.push(name);S.availableSets.forEach(s=>{const el=document.getElementById('set-'+encodeId(s));if(el)el.className='set-chip'+(S.activeSets.includes(s)?' active':'');});}
+function adjust(key,delta){const limits={players:[2,6],draw:[1,6],keep:[1,5]};const[mn,mx]=limits[key];S[key]=Math.max(mn,Math.min(mx,S[key]+delta));if(key==='draw'&&S.keep>S.draw){S.keep=S.draw;document.getElementById('display-keep').textContent=S.keep;}if(key==='keep'&&S.keep>S.draw){S.keep=S.draw;}document.getElementById('display-'+key).textContent=S[key];}
+function startDraft(){S.pool=SURVIVORS.filter(s=>S.activeSets.includes(s.set));if(S.pool.length<S.players*S.keep){alert('Non ci sono abbastanza Sopravvissuti nel pool!');return;}S.takenIds=new Set();S.currentPlayerIndex=0;S.playerResults=Array.from({length:S.players},()=>[]);showScreen('screen-draft');dealToCurrentPlayer();}
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+function dealToCurrentPlayer(){const available=S.pool.filter(s=>!S.takenIds.has(s.id));S.currentDraw=shuffle([...available]).slice(0,S.draw);S.selectedIds=[];S.freePickSurvivor=null;renderDraftScreen();}
+function totalSelected(){return S.selectedIds.length+(S.freePickSurvivor?1:0);}
+function renderDraftScreen(){document.getElementById('current-player-num').textContent=S.currentPlayerIndex+1;document.getElementById('round-display').textContent=S.currentPlayerIndex+1;document.getElementById('total-rounds').textContent=S.players;const rem=S.keep-totalSelected();document.getElementById('picks-info').textContent=rem>0?`Scegli ancora ${rem} Sopravvissut${rem>1?'i':'o'}`:'Selezione completata ✓';renderDraftGrid();document.getElementById('btn-confirm-picks').disabled=totalSelected()!==S.keep;}
+function renderDraftGrid(){let html=S.currentDraw.map(s=>survivorCardHtml(s,true)).join('');html+=S.freePickSurvivor?freePickFilledHtml(S.freePickSurvivor):freePickEmptyHtml();document.getElementById('draft-grid').innerHTML=html;}
+function freePickEmptyHtml(){return`<div class="free-pick-card" onclick="showFreePick()"><div class="free-pick-avatar-placeholder">?</div><div class="free-pick-body"><div class="free-pick-title">Scelta Libera</div><div class="free-pick-sub">Tocca per scegliere un Sopravvissuto dalla collezione</div></div></div>`;}
+function freePickFilledHtml(s){const col1=s.skills.slice(0,4),col2=s.skills.slice(4);return`<div class="free-pick-card filled" style="padding-bottom:20px"><img class="card-avatar" src="${s.avatar}" alt="${s.name}" onclick="openCardModal(event,'${s.id}')"><div class="card-body"><div><div class="card-top"><div><div class="card-name">${s.name}</div><div class="card-set">${s.set}</div></div><div class="card-number">#${s.id}</div></div><div class="skills-preview">${s.skills.map(sk=>`<div class="skill-dot ${sk.level}"></div>`).join('')}</div></div><div><button class="card-expand-btn" onclick="toggleSkills(event,'fp')">▸ Abilità</button><button class="change-btn" onclick="removeFreePickSurvivor(event)">✕ Annulla</button></div></div></div><div class="skills-expanded" id="skills-fp"><div class="skills-columns"><div>${col1.map(sk=>skillItemHtml(sk)).join('')}</div><div>${col2.map(sk=>skillItemHtml(sk)).join('')}</div></div></div>`;}
+function survivorCardHtml(s,selectable){const sel=S.selectedIds.includes(s.id);const col1=s.skills.slice(0,4),col2=s.skills.slice(4);const click=selectable?`toggleSelect('${s.id}')`:'';return`<div class="survivor-card ${sel?'selected':''}" id="card-${s.id}" onclick="${click}"><img class="card-avatar" src="${s.avatar}" alt="${s.name}" onclick="openCardModal(event,'${s.id}')"><div class="card-body"><div><div class="card-top"><div><div class="card-name">${s.name}</div><div class="card-set">${s.set}</div></div><div class="card-number">#${s.id}</div></div><div class="skills-preview">${s.skills.map(sk=>`<div class="skill-dot ${sk.level}"></div>`).join('')}</div></div><button class="card-expand-btn" onclick="toggleSkills(event,'${s.id}')">▸ Abilità</button></div></div><div class="skills-expanded" id="skills-${s.id}"><div class="skills-columns"><div>${col1.map(sk=>skillItemHtml(sk)).join('')}</div><div>${col2.map(sk=>skillItemHtml(sk)).join('')}</div></div></div>`;}
+function skillItemHtml(sk){const n=sk.name.replace(/'/g,"\'").replace(/"/g,'&quot;');return`<div class="skill-item" onclick="openSkillModal(event,'${n}','${sk.level}')"><div class="skill-flame ${sk.level}"></div><span class="skill-name">${sk.name}</span></div>`;}
+function toggleSelect(id){const i=S.selectedIds.indexOf(id);if(i>-1)S.selectedIds.splice(i,1);else if(totalSelected()<S.keep)S.selectedIds.push(id);renderDraftScreen();}
+function toggleSkills(e,id){e.stopPropagation();const el=document.getElementById('skills-'+id);if(!el)return;const open=el.classList.toggle('open');e.target.textContent=open?'▾ Abilità':'▸ Abilità';}
+function showFreePick(){S._tempFreePickId=null;S._fpSetFilter=null;document.getElementById('free-pick-search').value='';showScreen('screen-freepick');renderFpSetChips();renderFreePickGrid('');}
+function renderFpSetChips(){document.getElementById('fp-set-chips').innerHTML=S.activeSets.map(s=>`<div class="set-chip ${S._fpSetFilter===s?'active':''}" onclick="toggleFpSet('${encodeId(s)}')">${s}</div>`).join('');}
+function toggleFpSet(id){const name=S.availableSets.find(s=>encodeId(s)===id);S._fpSetFilter=S._fpSetFilter===name?null:name;renderFpSetChips();renderFreePickGrid(document.getElementById('free-pick-search').value);}
+function renderFreePickGrid(filter){const drawnIds=new Set(S.currentDraw.map(s=>s.id));const available=SURVIVORS.filter(s=>!S.takenIds.has(s.id)&&!drawnIds.has(s.id)&&S.activeSets.includes(s.set)&&(!S._fpSetFilter||s.set===S._fpSetFilter)&&s.name.toLowerCase().includes((filter||'').toLowerCase()));const grid=document.getElementById('freepick-grid');if(!available.length){grid.innerHTML='<div style="text-align:center;color:rgba(245,232,208,0.4);padding:20px;font-family:Cinzel,serif;font-size:12px">Nessun Sopravvissuto disponibile</div>';document.getElementById('btn-confirm-free').disabled=true;return;}grid.innerHTML=available.map(s=>{const sel=S._tempFreePickId===s.id;const col1=s.skills.slice(0,4),col2=s.skills.slice(4);return`<div class="survivor-card ${sel?'selected':''}" id="fp-${s.id}" onclick="selectTempFree('${s.id}')"><img class="card-avatar" src="${s.avatar}" alt="${s.name}" onclick="openCardModal(event,'${s.id}')"><div class="card-body"><div><div class="card-top"><div><div class="card-name">${s.name}</div><div class="card-set">${s.set}</div></div><div class="card-number">#${s.id}</div></div><div class="skills-preview">${s.skills.map(sk=>`<div class="skill-dot ${sk.level}"></div>`).join('')}</div></div><button class="card-expand-btn" onclick="toggleSkills(event,'fpl-${s.id}')">▸ Abilità</button></div></div><div class="skills-expanded" id="skills-fpl-${s.id}"><div class="skills-columns"><div>${col1.map(sk=>skillItemHtml(sk)).join('')}</div><div>${col2.map(sk=>skillItemHtml(sk)).join('')}</div></div></div>`;}).join('');document.getElementById('btn-confirm-free').disabled=!S._tempFreePickId;}
+function selectTempFree(id){S._tempFreePickId=S._tempFreePickId===id?null:id;document.querySelectorAll('[id^="fp-"]').forEach(el=>{if(el.classList.contains('survivor-card'))el.className='survivor-card'+(S._tempFreePickId===el.id.replace('fp-','')?' selected':'');});document.getElementById('btn-confirm-free').disabled=!S._tempFreePickId;}
+function filterFreePick(val){renderFreePickGrid(val);}
+function confirmFreePick(){if(!S._tempFreePickId)return;S.freePickSurvivor=SURVIVORS.find(s=>s.id===S._tempFreePickId);showScreen('screen-draft');renderDraftScreen();}
+function cancelFreePick(){showScreen('screen-draft');}
+function removeFreePickSurvivor(e){e.stopPropagation();S.freePickSurvivor=null;renderDraftScreen();}
+function confirmPicks(){if(totalSelected()!==S.keep)return;const chosen=S.selectedIds.map(id=>SURVIVORS.find(s=>s.id===id));if(S.freePickSurvivor)chosen.push(S.freePickSurvivor);chosen.forEach(s=>S.takenIds.add(s.id));S.playerResults[S.currentPlayerIndex]=chosen;S.currentPlayerIndex++;if(S.currentPlayerIndex>=S.players)showSummary();else dealToCurrentPlayer();}
+function showSummary(){showScreen('screen-summary');document.getElementById('summary-content').innerHTML=S.playerResults.map((survivors,i)=>`<div class="player-summary"><div class="player-summary-title">GIOCATORE ${i+1}</div><div class="summary-survivors">${survivors.map(s=>`<div class="summary-card"><img class="summary-avatar" src="${s.avatar}" alt="${s.name}" onclick="openCardModal(event,'${s.id}')"><div class="summary-name">${s.name}</div><div class="summary-number">#${s.id}</div><div class="summary-set">${s.set}</div></div>`).join('')}</div></div>`).join('');}
+function restartDraft(){S.currentPlayerIndex=0;S.takenIds=new Set();S.playerResults=[];showScreen('screen-setup');}
+
+initSets();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+</script>
+</body>
+</html>
