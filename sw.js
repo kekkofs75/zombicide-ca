@@ -1,37 +1,27 @@
-const CACHE = 'zc-v1';
+const CACHE = 'zc-v2';
 const ASSETS = [
   '/zombicide-ca/',
   '/zombicide-ca/index.html',
   '/zombicide-ca/data.js',
-  '/zombicide-ca/img/icon.png',
+  '/zombicide-ca/img/icon-192.png',
+  '/zombicide-ca/img/icon-512.png',
 ];
-
-// Pre-cache core files on install
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(ASSETS))
-  );
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
   self.skipWaiting();
 });
-
 self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
-  );
+  e.waitUntil(caches.keys().then(keys =>
+    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+  ));
   self.clients.claim();
 });
-
-// Network first, fallback to cache
 self.addEventListener('fetch', e => {
   e.respondWith(
-    fetch(e.request)
-      .then(res => {
-        const clone = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, clone));
-        return res;
-      })
-      .catch(() => caches.match(e.request))
+    fetch(e.request).then(res => {
+      const clone = res.clone();
+      caches.open(CACHE).then(c => c.put(e.request, clone));
+      return res;
+    }).catch(() => caches.match(e.request))
   );
 });

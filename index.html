@@ -6,7 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#1a0005">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
 <title>Zombicide Companion</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
@@ -132,15 +134,62 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 .modal-desc-en{font-size:15px;color:var(--text-light);line-height:1.7;margin-bottom:12px;font-style:italic;}
 .modal-desc-it{font-size:14px;color:rgba(245,232,208,0.65);line-height:1.7;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);}
 .modal-close{position:absolute;top:20px;right:20px;width:32px;height:32px;background:rgba(255,255,255,0.08);border:none;border-radius:50%;color:var(--text-light);font-size:18px;cursor:pointer;line-height:32px;text-align:center;}
+
+/* ===== ZOMBIE BESTIARY ===== */
+.zombie-card{background:linear-gradient(135deg,rgba(42,26,16,0.9),rgba(20,8,5,0.95));border:1px solid rgba(180,40,40,0.3);border-radius:12px;overflow:hidden;display:flex;cursor:pointer;position:relative;margin-bottom:12px;}
+.zombie-card:active{border-color:rgba(200,60,60,0.6);}
+.zombie-avatar-wrap{width:90px;min-height:120px;flex-shrink:0;position:relative;cursor:pointer;}
+.zombie-avatar-wrap img{width:90px;height:100%;object-fit:cover;object-position:top center;}
+.zombie-avatar-placeholder{width:90px;min-height:120px;background:rgba(80,10,10,0.4);border-right:1px solid rgba(180,40,40,0.2);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;}
+.zombie-avatar-placeholder .z-tipo-icon{font-size:28px;opacity:0.7;}
+.zombie-body{flex:1;padding:10px 12px;display:flex;flex-direction:column;gap:6px;}
+.zombie-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:var(--text-light);line-height:1;}
+.zombie-setname{font-size:10px;color:var(--fire);letter-spacing:1px;font-style:italic;}
+.zombie-tipo-row{display:flex;align-items:center;gap:8px;margin-top:2px;}
+.zombie-tipo-badge{font-family:'Cinzel',serif;font-size:10px;padding:2px 8px;border-radius:10px;letter-spacing:1px;}
+.zombie-tipo-badge.walker{background:rgba(60,100,40,0.25);border:1px solid rgba(60,100,40,0.5);color:#90c080;}
+.zombie-tipo-badge.runner{background:rgba(200,120,0,0.25);border:1px solid rgba(200,120,0,0.5);color:#ffbb44;}
+.zombie-tipo-badge.fatty{background:rgba(100,40,140,0.25);border:1px solid rgba(100,40,140,0.5);color:#cc88ff;}
+.zombie-tipo-badge.abomination{background:rgba(160,10,10,0.25);border:1px solid rgba(160,10,10,0.5);color:#ff7070;}
+.zombie-tipo-badge.necromancer{background:rgba(60,0,100,0.25);border:1px solid rgba(60,0,100,0.5);color:#bb88ff;}
+.zombie-tipo-badge.wolfz{background:rgba(40,70,130,0.25);border:1px solid rgba(40,70,130,0.5);color:#88aaff;}
+.zombie-priority{font-family:'Cinzel',serif;font-size:10px;color:rgba(245,232,208,0.5);letter-spacing:1px;}
+.zombie-priority span{color:var(--blood-light);font-weight:700;}
+.zombie-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:4px;}
+.zombie-stat{display:flex;justify-content:space-between;align-items:center;}
+.zombie-stat-label{font-family:'Cinzel',serif;font-size:9px;color:rgba(245,232,208,0.45);letter-spacing:1px;}
+.zombie-stat-value{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--gold-light);}
+.zombie-speciali-btn{margin-top:6px;font-size:11px;color:rgba(200,80,0,0.7);font-family:'Cinzel',serif;cursor:pointer;border:none;background:none;padding:0;text-align:left;}
+.zombie-speciali-body{padding:8px 0 4px;font-size:12px;color:rgba(245,232,208,0.7);line-height:1.6;border-top:1px solid rgba(180,40,40,0.15);margin-top:4px;display:none;}
+.zombie-speciali-body.open{display:block;}
+
+/* Zombie modal stats */
+.zombie-modal-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+.zombie-modal-stat{background:rgba(255,255,255,0.04);border-radius:8px;padding:10px;text-align:center;}
+.zombie-modal-stat-label{font-family:'Cinzel',serif;font-size:9px;color:rgba(245,232,208,0.5);letter-spacing:1px;margin-bottom:4px;}
+.zombie-modal-stat-value{font-family:'Cinzel',serif;font-size:22px;font-weight:900;color:var(--gold-light);}
+.zombie-modal-tipo{display:inline-block;font-family:'Cinzel',serif;font-size:11px;padding:4px 12px;border-radius:12px;letter-spacing:1px;margin-bottom:12px;}
+
+/* Rules accordion */
+.rules-accordion{background:linear-gradient(135deg,rgba(42,26,16,0.9),rgba(20,8,5,0.95));border:1px solid rgba(201,168,76,0.2);border-radius:12px;margin-bottom:10px;overflow:hidden;}
+.rules-accordion-header{font-family:'Cinzel',serif;font-size:12px;color:var(--gold);letter-spacing:2px;padding:12px 14px;background:rgba(0,0,0,0.2);display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
+.rules-accordion-header:active{background:rgba(0,0,0,0.35);}
+.rules-accordion-body{display:none;padding:12px 14px;}
+.rules-accordion-body.open{display:block;}
+.rules-phase-item{font-size:13px;color:rgba(245,232,208,0.75);line-height:1.6;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.rules-phase-item:last-child{border-bottom:none;}
+.rules-phase-item strong{color:var(--gold-light);}
+.rules-note{font-size:11px;color:rgba(245,232,208,0.45);font-style:italic;margin-top:8px;line-height:1.5;}
+
 </style>
 </head>
 <body>
 
 <div class="app-header">
   <div style="display:flex;align-items:center;justify-content:space-between;max-width:480px;margin:0 auto;">
-    <img src="img/icon.png" alt="" style="width:44px;height:44px;object-fit:contain;border-radius:50%;border:1px solid rgba(201,168,76,0.3);filter:drop-shadow(0 0 8px rgba(232,80,10,0.8));">
+    <img src="img/icon-192.png" alt="" style="width:44px;height:44px;object-fit:contain;border-radius:50%;border:1px solid rgba(201,168,76,0.3);filter:drop-shadow(0 0 8px rgba(232,80,10,0.8));">
     <div style="flex:1;text-align:center;"><div class="app-title">ZOMBICIDE</div><div class="app-subtitle">COMPANION</div></div>
-    <img src="img/icon.png" alt="" style="width:44px;height:44px;object-fit:contain;border-radius:50%;border:1px solid rgba(201,168,76,0.3);filter:drop-shadow(0 0 8px rgba(232,80,10,0.8));transform:scaleX(-1);">
+    <img src="img/icon-192.png" alt="" style="width:44px;height:44px;object-fit:contain;border-radius:50%;border:1px solid rgba(201,168,76,0.3);filter:drop-shadow(0 0 8px rgba(232,80,10,0.8));transform:scaleX(-1);">
   </div>
 </div>
 
@@ -164,9 +213,13 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
       <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="8" y="6" width="14" height="32" rx="2" fill="#c9a84c" opacity="0.6"/><rect x="22" y="6" width="14" height="32" rx="2" fill="#f0d080" opacity="0.8"/><rect x="20" y="6" width="4" height="32" fill="#8b0000" opacity="0.8"/><line x1="25" y1="14" x2="33" y2="14" stroke="#1a0008" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/><line x1="25" y1="19" x2="33" y2="19" stroke="#1a0008" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/><line x1="25" y1="24" x2="33" y2="24" stroke="#1a0008" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/><line x1="25" y1="29" x2="30" y2="29" stroke="#1a0008" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/></svg>
       <div class="home-btn-text"><div class="home-btn-title">Regole Rapide</div><div class="home-btn-desc">Consulta le regole durante la partita</div></div>
     </button>
-    <button class="home-btn" disabled>
+    <button class="home-btn" onclick="showScreen('screen-bestiario')">
       <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="12" y="10" width="20" height="22" rx="6" fill="#c9a84c" opacity="0.7"/><line x1="16" y1="17" x2="20" y2="21" stroke="#080003" stroke-width="2" stroke-linecap="round"/><line x1="20" y1="17" x2="16" y2="21" stroke="#080003" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="19" r="3" fill="#080003"/><rect x="15" y="26" width="14" height="4" rx="1" fill="#080003"/><rect x="17" y="26" width="3" height="4" fill="#c9a84c" opacity="0.7"/><rect x="22" y="26" width="3" height="4" fill="#c9a84c" opacity="0.7"/><rect x="19" y="32" width="6" height="5" rx="2" fill="#c9a84c" opacity="0.5"/></svg>
-      <div class="home-btn-text"><div class="home-btn-title">Bestiario</div><div class="home-btn-desc">Zombie, Abomini, Necromanti</div></div>
+      <div class="home-btn-text"><div class="home-btn-title">Bestiario</div><div class="home-btn-desc">Zombie, Abomini, Necromanti e le loro caratteristiche</div></div>
+    </button>
+    <button class="home-btn" disabled>
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="16" r="8" fill="#c9a84c" opacity="0.6"/><path d="M22 8 L26 14 L32 15 L28 20 L29 26 L22 23 L15 26 L16 20 L12 15 L18 14 Z" fill="#8b0000" opacity="0.8"/><rect x="10" y="30" width="24" height="3" rx="1.5" fill="#c9a84c" opacity="0.4"/><rect x="14" y="35" width="16" height="3" rx="1.5" fill="#c9a84c" opacity="0.3"/></svg>
+      <div class="home-btn-text"><div class="home-btn-title">Pesca Casuale</div><div class="home-btn-desc">Estrai Abomini e Necromanti per la partita</div></div>
       <div class="home-btn-badge">PRESTO</div>
     </button>
   </div>
@@ -243,6 +296,56 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 <div class="screen" id="screen-regole">
   <button class="back-btn" onclick="showScreen('screen-home')">← HOME</button>
   <div class="section-title">Regole Rapide</div>
+
+  <div class="section-title" style="font-size:11px;margin-bottom:12px">RIEPILOGO DEL ROUND</div>
+  <div style="font-size:11px;color:rgba(245,232,208,0.35);font-style:italic;text-align:center;margin:-8px 0 12px">Il regolamento ha sempre la precedenza su questo riassunto.</div>
+
+  <div class="rules-accordion">
+    <div class="rules-accordion-header" onclick="toggleAccordion('fase-giocatori')">
+      ⚔ FASE DEI GIOCATORI <span id="arr-fase-giocatori">▸</span>
+    </div>
+    <div class="rules-accordion-body" id="fase-giocatori">
+      <p style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.6;margin-bottom:10px;">Il primo giocatore attiva tutti i suoi Sopravvissuti uno dopo l'altro in qualsiasi ordine, poi passa il turno in senso orario. Ogni Sopravvissuto ha <strong style="color:var(--gold-light)">3 Azioni</strong>. Ogni Azione può essere effettuata più volte per Attivazione (salvo dove indicato).</p>
+      <div class="rules-phase-item"><strong>Movimento:</strong> il Sopravvissuto si muove di 1 Zona. Azioni extra se ci sono Zombie nella Zona di partenza.</div>
+      <div class="rules-phase-item"><strong>Cercare</strong> (1× per Turno): solo in Zone edificio senza Zombie. Pescare una carta Equipaggiamento.</div>
+      <div class="rules-phase-item"><strong>Aprire una porta:</strong> genera gli Zombie all'interno se è la prima porta aperta nell'edificio.</div>
+      <div class="rules-phase-item"><strong>Riorganizzare / Scambiare:</strong> scambiare Equipaggiamento con un Sopravvissuto nella stessa Zona.</div>
+      <div class="rules-phase-item"><strong>Azione di Combattimento:</strong> Magia / Mischia / Distanza — richiede l'arma o incantesimo impugnato.</div>
+      <div class="rules-phase-item"><strong>Azione di Incantamento:</strong> richiede un Incantamento impugnato.</div>
+      <div class="rules-phase-item"><strong>Prendere / Attivare un Obiettivo</strong> nella propria Zona.</div>
+      <div class="rules-phase-item"><strong>Fare Rumore:</strong> collocare un segnalino Rumore nella propria Zona.</div>
+      <div class="rules-phase-item"><strong>Non Fare Niente:</strong> le Azioni rimanenti vanno perse.</div>
+      <div class="rules-note">Green Horde — Azione di Assedio: Muovere un Trabucco (3 Az.) o Fare Fuoco (3 Az.) su una Zona a Gittata 2+. Precisione 4+ (3+ con Linea di Vista). Scelta: Spargimento 6d·1 Dan. / Grappolo 3d·2 Dan. / Macigno 1d·3 Dan.</div>
+    </div>
+  </div>
+
+  <div class="rules-accordion">
+    <div class="rules-accordion-header" onclick="toggleAccordion('fase-zombie')">
+      💀 FASE DEGLI ZOMBIE <span id="arr-fase-zombie">▸</span>
+    </div>
+    <div class="rules-accordion-body" id="fase-zombie">
+      <p style="font-family:'Cinzel',serif;font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px;">PASSO 1 — ATTIVAZIONE</p>
+      <div class="rules-phase-item">Zombie nella stessa Zona di Sopravvissuti → <strong>attaccano</strong>.</div>
+      <div class="rules-phase-item">Gli altri → si <strong>muovono</strong> verso i Sopravvissuti visibili o, in assenza, verso il Rumore. Si sceglie il percorso più breve. In caso di parità gli Zombie si dividono equamente.</div>
+      <div class="rules-phase-item"><strong>Runner:</strong> 2 Azioni per Attivazione. Dopo la prima Azione di tutti gli Zombie, i Runner ripetono il passo di Attivazione.</div>
+      <p style="font-family:'Cinzel',serif;font-size:10px;color:var(--gold);letter-spacing:2px;margin:12px 0 8px;">PASSO 2 — GENERAZIONE</p>
+      <div class="rules-phase-item">Pescare le carte Zombie per tutte le Zone di Generazione in ordine orario.</div>
+      <div class="rules-phase-item">Si usa il <strong>Livello di Pericolo più alto</strong> tra i Sopravvissuti attivi.</div>
+      <div class="rules-phase-item">Nessuna miniatura del tipo richiesto? Tutti gli Zombie di quel tipo ottengono un'<strong>Attivazione Extra!</strong></div>
+    </div>
+  </div>
+
+  <div class="rules-accordion">
+    <div class="rules-accordion-header" onclick="toggleAccordion('fase-finale')">
+      🏁 FASE FINALE <span id="arr-fase-finale">▸</span>
+    </div>
+    <div class="rules-accordion-body" id="fase-finale">
+      <div class="rules-phase-item">Rimuovere tutti i <strong>segnalini Rumore</strong> dal tabellone.</div>
+      <div class="rules-phase-item">Il giocatore successivo riceve il <strong>segnalino Primo Giocatore</strong> (procedendo in senso orario).</div>
+    </div>
+  </div>
+
+  <div class="section-title" style="font-size:11px;margin:20px 0 12px">REGOLE SPECIALI</div>
   <div class="rules-card">
     <div class="rules-card-header">ZONA ALLAGATA — USCITA</div>
     <div class="rules-scroll">
@@ -253,6 +356,16 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
       </table>
     </div>
   </div>
+</div>
+
+
+<!-- BESTIARIO -->
+<div class="screen" id="screen-bestiario">
+  <button class="back-btn" onclick="showScreen('screen-home')">← HOME</button>
+  <div class="section-title">Bestiario</div>
+  <input class="search-bar" type="text" placeholder="Cerca uno zombie..." oninput="renderBestiario(this.value)" id="bestiary-search">
+  <div id="bestiary-set-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;"></div>
+  <div id="bestiary-list"></div>
 </div>
 
 <!-- MODAL Skill -->
@@ -280,7 +393,8 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 
 <script src="data.js"></script>
 <script>
-function showScreen(id,pushState=true){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);if(id==='screen-capacita'){document.getElementById('capacita-search').value='';renderCapacita('');}if(pushState)history.pushState({screen:id},'','');}
+function showScreen(id,pushState=true){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);if(id==='screen-capacita'){document.getElementById('capacita-search').value='';renderCapacita('');}
+  if(id==='screen-bestiario'){document.getElementById('bestiary-search').value='';bestiary_setFilter=null;initBestiario();}if(pushState)history.pushState({screen:id},'','');}
 window.addEventListener('popstate',e=>{const cur=document.querySelector('.screen.active');if(!cur)return;if(cur.id==='screen-home'){history.pushState({screen:'screen-home'},'','');return;}if(cur.id==='screen-freepick'){showScreen('screen-draft',false);return;}showScreen('screen-home',false);});
 history.pushState({screen:'screen-home'},'','');
 
@@ -322,8 +436,154 @@ function confirmPicks(){if(totalSelected()!==S.keep)return;const chosen=S.select
 function showSummary(){showScreen('screen-summary');document.getElementById('summary-content').innerHTML=S.playerResults.map((survivors,i)=>`<div class="player-summary"><div class="player-summary-title">GIOCATORE ${i+1}</div><div class="summary-survivors">${survivors.map(s=>`<div class="summary-card"><img class="summary-avatar" src="${s.avatar}" alt="${s.name}" onclick="openCardModal(event,'${s.id}')"><div class="summary-name">${s.name}</div><div class="summary-number">#${s.id}</div><div class="summary-set">${s.set}</div></div>`).join('')}</div></div>`).join('');}
 function restartDraft(){S.currentPlayerIndex=0;S.takenIds=new Set();S.playerResults=[];showScreen('screen-setup');}
 
+
+// ===== BESTIARY =====
+const TIPO_COLORS = {
+  'Walker':      {cls:'walker',     icon:'🧟'},
+  'Runner':      {cls:'runner',     icon:'💨'},
+  'Fatty':       {cls:'fatty',      icon:'💀'},
+  'Abomination': {cls:'abomination',icon:'☠'},
+  'Necromancer': {cls:'necromancer',icon:'🔮'},
+  'Zombie Wolfz':{cls:'wolfz',      icon:'🐺'},
+};
+
+let bestiary_setFilter = null;
+
+function initBestiario() {
+  const sets = [...new Set(ZOMBIES.map(z => z.set))];
+  const chips = document.getElementById('bestiary-set-chips');
+  chips.innerHTML = sets.map(s =>
+    `<div class="set-chip ${bestiary_setFilter===s?'active':''}" onclick="toggleBestiarioSet('${s.replace(/'/g,"\\'")}');">${s}</div>`
+  ).join('');
+  renderBestiario(document.getElementById('bestiary-search')?.value || '');
+}
+
+function toggleBestiarioSet(setName) {
+  bestiary_setFilter = bestiary_setFilter === setName ? null : setName;
+  initBestiario();
+}
+
+function renderBestiario(filter) {
+  const f = (filter||'').toLowerCase();
+  const list = document.getElementById('bestiary-list');
+  const filtered = ZOMBIES.filter(z =>
+    (!bestiary_setFilter || z.set === bestiary_setFilter) &&
+    z.name.toLowerCase().includes(f)
+  );
+  if (!filtered.length) {
+    list.innerHTML = '<div style="text-align:center;color:rgba(245,232,208,0.4);padding:20px;font-family:Cinzel,serif;font-size:12px">Nessuno zombie trovato</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(z => zombieCardHtml(z)).join('');
+}
+
+function zombieCardHtml(z) {
+  const tc = TIPO_COLORS[z.tipo] || {cls:'walker',icon:'🧟'};
+  const avatarHtml = z.avatar
+    ? `<img src="${z.avatar}" alt="${z.name}" style="width:90px;height:100%;object-fit:cover;object-position:top" onclick="openZombieModal(event,'${z.id}')">`
+    : `<div class="zombie-avatar-placeholder" onclick="openZombieModal(event,'${z.id}')"><div class="z-tipo-icon">${tc.icon}</div><div style="font-family:'Cinzel',serif;font-size:9px;color:rgba(245,232,208,0.4);letter-spacing:1px">${z.tipo.toUpperCase()}</div></div>`;
+  const specHtml = z.regole_speciali
+    ? `<button class="zombie-speciali-btn" onclick="toggleZombieSpeciali(event,'zsp-${z.id}')">▸ Regole Speciali</button>
+       <div class="zombie-speciali-body" id="zsp-${z.id}">${z.regole_speciali}</div>`
+    : '';
+  return `<div class="zombie-card">
+    <div class="zombie-avatar-wrap">${avatarHtml}</div>
+    <div class="zombie-body">
+      <div class="zombie-name">${z.name}</div>
+      <div class="zombie-setname">${z.set}</div>
+      <div class="zombie-tipo-row">
+        <span class="zombie-tipo-badge ${tc.cls}">${z.tipo}</span>
+        <span class="zombie-priority">Priorità <span>${z.priorita}</span></span>
+      </div>
+      <div class="zombie-stats-grid">
+        <div class="zombie-stat"><span class="zombie-stat-label">AZIONI</span><span class="zombie-stat-value">${z.azioni}</span></div>
+        <div class="zombie-stat"><span class="zombie-stat-label">DANNI</span><span class="zombie-stat-value">${z.danni}</span></div>
+        <div class="zombie-stat"><span class="zombie-stat-label">RESISTENZA</span><span class="zombie-stat-value">${z.resistenza}</span></div>
+        <div class="zombie-stat"><span class="zombie-stat-label">ESPERIENZA</span><span class="zombie-stat-value">${z.esperienza}</span></div>
+      </div>
+      ${specHtml}
+    </div>
+  </div>`;
+}
+
+function toggleZombieSpeciali(e, id) {
+  e.stopPropagation();
+  const el = document.getElementById(id);
+  if (!el) return;
+  const open = el.classList.toggle('open');
+  e.target.textContent = open ? '▾ Regole Speciali' : '▸ Regole Speciali';
+}
+
+function openZombieModal(e, id) {
+  e.stopPropagation();
+  const z = ZOMBIES.find(x => x.id === id);
+  if (!z) return;
+  const tc = TIPO_COLORS[z.tipo] || {cls:'walker'};
+  document.getElementById('zombie-modal-name').textContent = z.name;
+  document.getElementById('zombie-modal-set').textContent = z.set;
+  const tipoBadge = document.getElementById('zombie-modal-tipo-badge');
+  tipoBadge.className = `zombie-modal-tipo zombie-tipo-badge ${tc.cls}`;
+  tipoBadge.textContent = z.tipo;
+  document.getElementById('zombie-modal-stats').innerHTML = `
+    <div class="zombie-modal-stat"><div class="zombie-modal-stat-label">PRIORITÀ</div><div class="zombie-modal-stat-value" style="color:var(--blood-light)">${z.priorita}</div></div>
+    <div class="zombie-modal-stat"><div class="zombie-modal-stat-label">AZIONI</div><div class="zombie-modal-stat-value">${z.azioni}</div></div>
+    <div class="zombie-modal-stat"><div class="zombie-modal-stat-label">DANNI</div><div class="zombie-modal-stat-value">${z.danni}</div></div>
+    <div class="zombie-modal-stat"><div class="zombie-modal-stat-label">RESISTENZA</div><div class="zombie-modal-stat-value">${z.resistenza}</div></div>
+    <div class="zombie-modal-stat" style="grid-column:1/-1"><div class="zombie-modal-stat-label">ESPERIENZA</div><div class="zombie-modal-stat-value">${z.esperienza}</div></div>
+  `;
+  const imgWrap = document.getElementById('zombie-modal-img-wrap');
+  if (z.card) {
+    document.getElementById('zombie-modal-img').src = z.card;
+    imgWrap.style.display = 'block';
+  } else {
+    imgWrap.style.display = 'none';
+  }
+  const specWrap = document.getElementById('zombie-modal-speciali-wrap');
+  if (z.regole_speciali) {
+    document.getElementById('zombie-modal-speciali').textContent = z.regole_speciali;
+    specWrap.style.display = 'block';
+  } else {
+    specWrap.style.display = 'none';
+  }
+  document.getElementById('zombie-modal').classList.add('open');
+}
+function closeZombieModal() { document.getElementById('zombie-modal').classList.remove('open'); }
+
+// ===== RULES ACCORDION =====
+function toggleAccordion(id) {
+  const body = document.getElementById(id);
+  const arr = document.getElementById('arr-' + id);
+  if (!body) return;
+  const open = body.classList.toggle('open');
+  if (arr) arr.textContent = open ? '▾' : '▸';
+}
+
+
 initSets();
+initBestiario();
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
+
+<!-- MODAL Zombie Detail -->
+<div class="modal-overlay" id="zombie-modal" onclick="if(event.target.id==='zombie-modal')closeZombieModal()">
+  <div class="modal-sheet" style="padding:16px 16px 36px">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeZombieModal()">×</button>
+    <div id="zombie-modal-img-wrap" style="text-align:center;margin-bottom:16px;display:none">
+      <img id="zombie-modal-img" src="" alt="" style="max-width:100%;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.6)">
+    </div>
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:4px">
+      <div id="zombie-modal-name" style="font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--text-light)"></div>
+    </div>
+    <div id="zombie-modal-set" style="font-size:11px;color:var(--fire);letter-spacing:1px;font-style:italic;margin-bottom:10px"></div>
+    <div id="zombie-modal-tipo-badge" class="zombie-modal-tipo"></div>
+    <div class="zombie-modal-stats" id="zombie-modal-stats"></div>
+    <div id="zombie-modal-speciali-wrap" style="display:none">
+      <div style="font-family:'Cinzel',serif;font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">REGOLE SPECIALI</div>
+      <div id="zombie-modal-speciali" style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7"></div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
