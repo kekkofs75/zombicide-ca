@@ -1,6 +1,6 @@
 {
-  "name": "Zombicide Companion",
-  "short_name": "ZC Companion",
+  "name": "Zombicide CA",
+  "short_name": "Zombicide CA",
   "description": "Companion app per Zombicide Black Plague",
   "start_url": "/zombicide-ca/",
   "scope": "/zombicide-ca/",

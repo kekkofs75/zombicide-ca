@@ -9,7 +9,7 @@
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
-<title>Zombicide Companion</title>
+<title>Zombicide CA</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root{--blood:#8b0000;--blood-light:#c0392b;--fire:#e8500a;--gold:#c9a84c;--gold-light:#f0d080;--darker:#080003;--blue-skill:#3a7cc2;--yellow-skill:#d4a820;--orange-skill:#d4660a;--red-skill:#b01010;--text-light:#f5e8d0;}
@@ -147,12 +147,15 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 .zombie-setname{font-size:10px;color:var(--fire);letter-spacing:1px;font-style:italic;}
 .zombie-tipo-row{display:flex;align-items:center;gap:8px;margin-top:2px;}
 .zombie-tipo-badge{font-family:'Cinzel',serif;font-size:10px;padding:2px 8px;border-radius:10px;letter-spacing:1px;}
-.zombie-tipo-badge.walker{background:rgba(60,100,40,0.25);border:1px solid rgba(60,100,40,0.5);color:#90c080;}
+.zombie-tipo-badge.walker{background:rgba(30,60,120,0.3);border:1px solid rgba(60,110,200,0.6);color:#88aaff;}
 .zombie-tipo-badge.runner{background:rgba(200,120,0,0.25);border:1px solid rgba(200,120,0,0.5);color:#ffbb44;}
-.zombie-tipo-badge.fatty{background:rgba(100,40,140,0.25);border:1px solid rgba(100,40,140,0.5);color:#cc88ff;}
+.zombie-tipo-badge.fatty{background:rgba(160,130,0,0.25);border:1px solid rgba(200,160,0,0.5);color:#ffe066;}
 .zombie-tipo-badge.abomination{background:rgba(160,10,10,0.25);border:1px solid rgba(160,10,10,0.5);color:#ff7070;}
-.zombie-tipo-badge.necromancer{background:rgba(60,0,100,0.25);border:1px solid rgba(60,0,100,0.5);color:#bb88ff;}
-.zombie-tipo-badge.wolfz{background:rgba(40,70,130,0.25);border:1px solid rgba(40,70,130,0.5);color:#88aaff;}
+.zombie-tipo-badge.necromancer{background:rgba(80,20,120,0.3);border:1px solid rgba(130,40,180,0.6);color:#cc88ff;}
+.zombie-tipo-badge.wolfz{background:rgba(90,90,90,0.3);border:1px solid rgba(140,140,140,0.5);color:#cccccc;}
+.zombie-tipo-badge.dragon{background:rgba(20,100,40,0.3);border:1px solid rgba(40,160,70,0.6);color:#66dd88;}
+.zombie-tipo-badge.crow{background:rgba(20,20,20,0.5);border:1px solid rgba(80,80,80,0.6);color:#aaaaaa;}
+.zombie-tipo-badge.rat{background:rgba(80,50,20,0.3);border:1px solid rgba(130,90,40,0.6);color:#cc9955;}
 .zombie-priority{font-family:'Cinzel',serif;font-size:10px;color:rgba(245,232,208,0.5);letter-spacing:1px;}
 .zombie-priority span{color:var(--blood-light);font-weight:700;}
 .zombie-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:4px;}
@@ -219,7 +222,7 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
     </button>
     <button class="home-btn" disabled>
       <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="16" r="8" fill="#c9a84c" opacity="0.6"/><path d="M22 8 L26 14 L32 15 L28 20 L29 26 L22 23 L15 26 L16 20 L12 15 L18 14 Z" fill="#8b0000" opacity="0.8"/><rect x="10" y="30" width="24" height="3" rx="1.5" fill="#c9a84c" opacity="0.4"/><rect x="14" y="35" width="16" height="3" rx="1.5" fill="#c9a84c" opacity="0.3"/></svg>
-      <div class="home-btn-text"><div class="home-btn-title">Pesca Casuale</div><div class="home-btn-desc">Estrai Abomini e Necromanti per la partita</div></div>
+      <div class="home-btn-text"><div class="home-btn-title">Zombie Draft</div><div class="home-btn-desc">Estrai Abomini e Necromanti per la partita</div></div>
       <div class="home-btn-badge">PRESTO</div>
     </button>
   </div>
@@ -315,7 +318,7 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
       <div class="rules-phase-item"><strong>Prendere / Attivare un Obiettivo</strong> nella propria Zona.</div>
       <div class="rules-phase-item"><strong>Fare Rumore:</strong> collocare un segnalino Rumore nella propria Zona.</div>
       <div class="rules-phase-item"><strong>Non Fare Niente:</strong> le Azioni rimanenti vanno perse.</div>
-      <div class="rules-note">Green Horde — Azione di Assedio: Muovere un Trabucco (3 Az.) o Fare Fuoco (3 Az.) su una Zona a Gittata 2+. Precisione 4+ (3+ con Linea di Vista). Scelta: Spargimento 6d·1 Dan. / Grappolo 3d·2 Dan. / Macigno 1d·3 Dan.</div>
+      <div class="rules-phase-item" style="margin-top:8px;border-top:1px solid rgba(201,168,76,0.1);padding-top:8px"><strong style="color:var(--fire)">Green Horde — Azione di Assedio:</strong> Muovere un Trabucco (3 Az.) o Fare Fuoco (3 Az.) su una Zona a Gittata 2+. Precisione 4+ (3+ con Linea di Vista). Scelta: Spargimento 6d·1 Dan. / Grappolo 3d·2 Dan. / Macigno 1d·3 Dan.</div>
     </div>
   </div>
 
@@ -328,6 +331,7 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
       <div class="rules-phase-item">Zombie nella stessa Zona di Sopravvissuti → <strong>attaccano</strong>.</div>
       <div class="rules-phase-item">Gli altri → si <strong>muovono</strong> verso i Sopravvissuti visibili o, in assenza, verso il Rumore. Si sceglie il percorso più breve. In caso di parità gli Zombie si dividono equamente.</div>
       <div class="rules-phase-item"><strong>Runner:</strong> 2 Azioni per Attivazione. Dopo la prima Azione di tutti gli Zombie, i Runner ripetono il passo di Attivazione.</div>
+      <div class="rules-phase-item"><strong>Wolfz</strong> <span style="font-size:10px;color:rgba(245,232,208,0.4)">(Wulfsburg)</span><strong>:</strong> 3 Azioni per Attivazione. Dopo che tutti gli Zombie (Runner inclusi) hanno eseguito la prima Azione, i Runner e i Wolfz ripetono il passo di Attivazione per la seconda Azione. Poi i soli Wolfz ripetono per la terza Azione.</div>
       <p style="font-family:'Cinzel',serif;font-size:10px;color:var(--gold);letter-spacing:2px;margin:12px 0 8px;">PASSO 2 — GENERAZIONE</p>
       <div class="rules-phase-item">Pescare le carte Zombie per tutte le Zone di Generazione in ordine orario.</div>
       <div class="rules-phase-item">Si usa il <strong>Livello di Pericolo più alto</strong> tra i Sopravvissuti attivi.</div>
@@ -439,23 +443,44 @@ function restartDraft(){S.currentPlayerIndex=0;S.takenIds=new Set();S.playerResu
 
 // ===== BESTIARY =====
 const TIPO_COLORS = {
-  'Walker':      {cls:'walker',     icon:'🧟'},
-  'Runner':      {cls:'runner',     icon:'💨'},
-  'Fatty':       {cls:'fatty',      icon:'💀'},
-  'Abomination': {cls:'abomination',icon:'☠'},
-  'Necromancer': {cls:'necromancer',icon:'🔮'},
-  'Zombie Wolfz':{cls:'wolfz',      icon:'🐺'},
+  'Walker':      {cls:'walker',      icon:'🧟', order:1},
+  'Runner':      {cls:'runner',      icon:'💨', order:2},
+  'Fatty':       {cls:'fatty',       icon:'💀', order:3},
+  'Abomination': {cls:'abomination', icon:'☠',  order:4},
+  'Necromancer': {cls:'necromancer', icon:'🔮', order:5},
+  'Zombie Wolfz':{cls:'wolfz',       icon:'🐺', order:6},
+  'Dragon':      {cls:'dragon',      icon:'🐉', order:7},
+  'Crow':        {cls:'crow',        icon:'🐦', order:8},
+  'Rat':         {cls:'rat',         icon:'🐀', order:9},
 };
+
+let bestiary_sort = 'tipo'; // 'tipo' | 'priorita' | 'nome'
 
 let bestiary_setFilter = null;
 
 function initBestiario() {
   const sets = [...new Set(ZOMBIES.map(z => z.set))];
   const chips = document.getElementById('bestiary-set-chips');
-  chips.innerHTML = sets.map(s =>
-    `<div class="set-chip ${bestiary_setFilter===s?'active':''}" onclick="toggleBestiarioSet('${s.replace(/'/g,"\\'")}');">${s}</div>`
-  ).join('');
+  const sorts = [
+    {k:'tipo',    label:'Per Tipo'},
+    {k:'priorita',label:'Per Priorità'},
+    {k:'nome',    label:'A-Z'},
+  ];
+  chips.innerHTML =
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;width:100%;margin-bottom:8px">' +
+    sorts.map(s =>
+      `<div class="set-chip ${bestiary_sort===s.k?'active':''}" style="font-size:10px;padding:6px 12px" onclick="setBestiarioSort('${s.k}')">${s.label}</div>`
+    ).join('') +
+    '</div>' +
+    sets.map(s =>
+      `<div class="set-chip ${bestiary_setFilter===s?'active':''}" onclick="toggleBestiarioSet('${s.replace(/'/g,"\\'")}');">${s}</div>`
+    ).join('');
   renderBestiario(document.getElementById('bestiary-search')?.value || '');
+}
+
+function setBestiarioSort(s) {
+  bestiary_sort = s;
+  initBestiario();
 }
 
 function toggleBestiarioSet(setName) {
@@ -466,15 +491,40 @@ function toggleBestiarioSet(setName) {
 function renderBestiario(filter) {
   const f = (filter||'').toLowerCase();
   const list = document.getElementById('bestiary-list');
-  const filtered = ZOMBIES.filter(z =>
+  let filtered = ZOMBIES.filter(z =>
     (!bestiary_setFilter || z.set === bestiary_setFilter) &&
-    z.name.toLowerCase().includes(f)
+    (z.name.toLowerCase().includes(f) || z.tipo.toLowerCase().includes(f))
   );
+  // Sort
+  if (bestiary_sort === 'tipo') {
+    filtered.sort((a,b) => {
+      const ao = (TIPO_COLORS[a.tipo]||{order:99}).order;
+      const bo = (TIPO_COLORS[b.tipo]||{order:99}).order;
+      return ao !== bo ? ao - bo : a.name.localeCompare(b.name);
+    });
+  } else if (bestiary_sort === 'priorita') {
+    filtered.sort((a,b) => a.priorita !== b.priorita ? a.priorita - b.priorita : a.name.localeCompare(b.name));
+  } else {
+    filtered.sort((a,b) => a.name.localeCompare(b.name));
+  }
   if (!filtered.length) {
     list.innerHTML = '<div style="text-align:center;color:rgba(245,232,208,0.4);padding:20px;font-family:Cinzel,serif;font-size:12px">Nessuno zombie trovato</div>';
     return;
   }
-  list.innerHTML = filtered.map(z => zombieCardHtml(z)).join('');
+  // Group by tipo if sorting by tipo
+  if (bestiary_sort === 'tipo') {
+    const groups = {};
+    filtered.forEach(z => { if(!groups[z.tipo]) groups[z.tipo]=[]; groups[z.tipo].push(z); });
+    list.innerHTML = Object.entries(groups).map(([tipo, zombies]) => {
+      const tc = TIPO_COLORS[tipo] || {icon:'🧟'};
+      return `<div style="font-family:'Cinzel',serif;font-size:11px;color:var(--gold);letter-spacing:2px;margin:16px 0 8px;display:flex;align-items:center;gap:8px">
+        <span>${tc.icon}</span> ${tipo.toUpperCase()}
+        <span style="flex:1;height:1px;background:rgba(201,168,76,0.2)"></span>
+      </div>` + zombies.map(z => zombieCardHtml(z)).join('');
+    }).join('');
+  } else {
+    list.innerHTML = filtered.map(z => zombieCardHtml(z)).join('');
+  }
 }
 
 function zombieCardHtml(z) {
@@ -489,7 +539,10 @@ function zombieCardHtml(z) {
   return `<div class="zombie-card">
     <div class="zombie-avatar-wrap">${avatarHtml}</div>
     <div class="zombie-body">
-      <div class="zombie-name">${z.name}</div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div class="zombie-name">${z.name}</div>
+        <div class="card-number">#${z.id.replace(/[A-Z]+/g,'')}</div>
+      </div>
       <div class="zombie-setname">${z.set}</div>
       <div class="zombie-tipo-row">
         <span class="zombie-tipo-badge ${tc.cls}">${z.tipo}</span>
