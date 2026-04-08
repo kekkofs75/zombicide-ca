@@ -153,6 +153,18 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 .zombie-tipo-badge.abomination{background:rgba(160,10,10,0.25);border:1px solid rgba(160,10,10,0.5);color:#ff7070;}
 .zombie-tipo-badge.necromancer{background:rgba(80,20,120,0.3);border:1px solid rgba(130,40,180,0.6);color:#cc88ff;}
 .zombie-tipo-badge.wolfz{background:rgba(90,90,90,0.3);border:1px solid rgba(140,140,140,0.5);color:#cccccc;}
+.zombie-tipo-badge.rat{background:rgba(80,50,20,0.3);border:1px solid rgba(130,90,40,0.6);color:#cc9955;}
+/* Colored dot for bestiario group header */
+.zombie-tipo-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;display:inline-block;}
+.zombie-tipo-dot.walker{background:#88aaff;box-shadow:0 0 4px #88aaff;}
+.zombie-tipo-dot.runner{background:#ffbb44;box-shadow:0 0 4px #ffbb44;}
+.zombie-tipo-dot.fatty{background:#ffe066;box-shadow:0 0 4px #ffe066;}
+.zombie-tipo-dot.abomination{background:#ff7070;box-shadow:0 0 4px #ff7070;}
+.zombie-tipo-dot.necromancer{background:#cc88ff;box-shadow:0 0 4px #cc88ff;}
+.zombie-tipo-dot.wolfz{background:#cccccc;box-shadow:0 0 4px #cccccc;}
+.zombie-tipo-dot.dragon{background:#66dd88;box-shadow:0 0 4px #66dd88;}
+.zombie-tipo-dot.crow{background:#aaaaaa;box-shadow:0 0 4px #aaaaaa;}
+.zombie-tipo-dot.rat{background:#cc9955;box-shadow:0 0 4px #cc9955;}
 .zombie-tipo-badge.dragon{background:rgba(20,100,40,0.3);border:1px solid rgba(40,160,70,0.6);color:#66dd88;}
 .zombie-tipo-badge.crow{background:rgba(20,20,20,0.5);border:1px solid rgba(80,80,80,0.6);color:#aaaaaa;}
 .zombie-tipo-badge.rat{background:rgba(80,50,20,0.3);border:1px solid rgba(130,90,40,0.6);color:#cc9955;}
@@ -330,8 +342,7 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
       <p style="font-family:'Cinzel',serif;font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px;">PASSO 1 — ATTIVAZIONE</p>
       <div class="rules-phase-item">Zombie nella stessa Zona di Sopravvissuti → <strong>attaccano</strong>.</div>
       <div class="rules-phase-item">Gli altri → si <strong>muovono</strong> verso i Sopravvissuti visibili o, in assenza, verso il Rumore. Si sceglie il percorso più breve. In caso di parità gli Zombie si dividono equamente.</div>
-      <div class="rules-phase-item"><strong>Runner:</strong> 2 Azioni per Attivazione. Dopo la prima Azione di tutti gli Zombie, i Runner ripetono il passo di Attivazione.</div>
-      <div class="rules-phase-item"><strong>Wolfz</strong> <span style="font-size:10px;color:rgba(245,232,208,0.4)">(Wulfsburg)</span><strong>:</strong> 3 Azioni per Attivazione. Dopo che tutti gli Zombie (Runner inclusi) hanno eseguito la prima Azione, i Runner e i Wolfz ripetono il passo di Attivazione per la seconda Azione. Poi i soli Wolfz ripetono per la terza Azione.</div>
+      <div class="rules-phase-item"><strong>Runner / Wolfz:</strong> 2/3 Azioni per Attivazione. Dopo che tutti gli Zombie (Runner/Wolfz inclusi) hanno eseguito la prima Azione, i Runner/Wolfz ripetono il passo di Attivazione per la seconda Azione. Poi i soli Wolfz lo ripetono per la terza Azione.</div>
       <p style="font-family:'Cinzel',serif;font-size:10px;color:var(--gold);letter-spacing:2px;margin:12px 0 8px;">PASSO 2 — GENERAZIONE</p>
       <div class="rules-phase-item">Pescare le carte Zombie per tutte le Zone di Generazione in ordine orario.</div>
       <div class="rules-phase-item">Si usa il <strong>Livello di Pericolo più alto</strong> tra i Sopravvissuti attivi.</div>
@@ -443,15 +454,15 @@ function restartDraft(){S.currentPlayerIndex=0;S.takenIds=new Set();S.playerResu
 
 // ===== BESTIARY =====
 const TIPO_COLORS = {
-  'Walker':      {cls:'walker',      icon:'🧟', order:1},
-  'Runner':      {cls:'runner',      icon:'💨', order:2},
-  'Fatty':       {cls:'fatty',       icon:'💀', order:3},
-  'Abomination': {cls:'abomination', icon:'☠',  order:4},
-  'Necromancer': {cls:'necromancer', icon:'🔮', order:5},
-  'Zombie Wolfz':{cls:'wolfz',       icon:'🐺', order:6},
-  'Dragon':      {cls:'dragon',      icon:'🐉', order:7},
-  'Crow':        {cls:'crow',        icon:'🐦', order:8},
-  'Rat':         {cls:'rat',         icon:'🐀', order:9},
+  'Rat':         {cls:'rat',         order:1},
+  'Walker':      {cls:'walker',      order:2},
+  'Fatty':       {cls:'fatty',       order:3},
+  'Abomination': {cls:'abomination', order:3},
+  'Runner':      {cls:'runner',      order:4},
+  'Zombie Wolfz':{cls:'wolfz',       order:5},
+  'Necromancer': {cls:'necromancer', order:6},
+  'Dragon':      {cls:'dragon',      order:7},
+  'Crow':        {cls:'crow',        order:8},
 };
 
 let bestiary_sort = 'tipo'; // 'tipo' | 'priorita' | 'nome'
@@ -497,10 +508,14 @@ function renderBestiario(filter) {
   );
   // Sort
   if (bestiary_sort === 'tipo') {
+    // Sort by priority, then by tipo order within same priority, then name
+    const TIPO_SUBORDER = {'Fatty':0,'Abomination':1};
     filtered.sort((a,b) => {
-      const ao = (TIPO_COLORS[a.tipo]||{order:99}).order;
-      const bo = (TIPO_COLORS[b.tipo]||{order:99}).order;
-      return ao !== bo ? ao - bo : a.name.localeCompare(b.name);
+      if (a.priorita !== b.priorita) return a.priorita - b.priorita;
+      const as = TIPO_SUBORDER[a.tipo] ?? 0;
+      const bs = TIPO_SUBORDER[b.tipo] ?? 0;
+      if (as !== bs) return as - bs;
+      return a.name.localeCompare(b.name);
     });
   } else if (bestiary_sort === 'priorita') {
     filtered.sort((a,b) => a.priorita !== b.priorita ? a.priorita - b.priorita : a.name.localeCompare(b.name));
@@ -516,9 +531,9 @@ function renderBestiario(filter) {
     const groups = {};
     filtered.forEach(z => { if(!groups[z.tipo]) groups[z.tipo]=[]; groups[z.tipo].push(z); });
     list.innerHTML = Object.entries(groups).map(([tipo, zombies]) => {
-      const tc = TIPO_COLORS[tipo] || {icon:'🧟'};
+      const tc = TIPO_COLORS[tipo] || {cls:'walker'};
       return `<div style="font-family:'Cinzel',serif;font-size:11px;color:var(--gold);letter-spacing:2px;margin:16px 0 8px;display:flex;align-items:center;gap:8px">
-        <span>${tc.icon}</span> ${tipo.toUpperCase()}
+        <span class="zombie-tipo-dot ${tc.cls}"></span> ${tipo.toUpperCase()}
         <span style="flex:1;height:1px;background:rgba(201,168,76,0.2)"></span>
       </div>` + zombies.map(z => zombieCardHtml(z)).join('');
     }).join('');
@@ -577,12 +592,12 @@ function openZombieModal(e, id) {
   const tipoBadge = document.getElementById('zombie-modal-tipo-badge');
   tipoBadge.className = `zombie-modal-tipo zombie-tipo-badge ${tc.cls}`;
   tipoBadge.textContent = z.tipo;
+  document.getElementById('zombie-modal-priorita').textContent = `Priorità ${z.priorita}`;
   document.getElementById('zombie-modal-stats').innerHTML = `
-    <div class="zombie-modal-stat"><div class="zombie-modal-stat-label">PRIORITÀ</div><div class="zombie-modal-stat-value" style="color:var(--blood-light)">${z.priorita}</div></div>
     <div class="zombie-modal-stat"><div class="zombie-modal-stat-label">AZIONI</div><div class="zombie-modal-stat-value">${z.azioni}</div></div>
     <div class="zombie-modal-stat"><div class="zombie-modal-stat-label">DANNI</div><div class="zombie-modal-stat-value">${z.danni}</div></div>
     <div class="zombie-modal-stat"><div class="zombie-modal-stat-label">RESISTENZA</div><div class="zombie-modal-stat-value">${z.resistenza}</div></div>
-    <div class="zombie-modal-stat" style="grid-column:1/-1"><div class="zombie-modal-stat-label">ESPERIENZA</div><div class="zombie-modal-stat-value">${z.esperienza}</div></div>
+    <div class="zombie-modal-stat"><div class="zombie-modal-stat-label">ESPERIENZA</div><div class="zombie-modal-stat-value">${z.esperienza}</div></div>
   `;
   const imgWrap = document.getElementById('zombie-modal-img-wrap');
   if (z.card) {
@@ -619,9 +634,9 @@ if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
 <!-- MODAL Zombie Detail -->
 <div class="modal-overlay" id="zombie-modal" onclick="if(event.target.id==='zombie-modal')closeZombieModal()">
-  <div class="modal-sheet" style="padding:16px 16px 36px">
+  <div class="modal-sheet" style="padding:16px 16px 36px;max-height:90vh;overflow-y:auto;">
     <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeZombieModal()">×</button>
+    <button class="modal-close" onclick="closeZombieModal()" style="position:sticky;top:0;z-index:10;">×</button>
     <div id="zombie-modal-img-wrap" style="text-align:center;margin-bottom:16px;display:none">
       <img id="zombie-modal-img" src="" alt="" style="max-width:100%;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.6)">
     </div>
@@ -629,7 +644,10 @@ if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
       <div id="zombie-modal-name" style="font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--text-light)"></div>
     </div>
     <div id="zombie-modal-set" style="font-size:11px;color:var(--fire);letter-spacing:1px;font-style:italic;margin-bottom:10px"></div>
-    <div id="zombie-modal-tipo-badge" class="zombie-modal-tipo"></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <div id="zombie-modal-tipo-badge" class="zombie-modal-tipo"></div>
+      <div id="zombie-modal-priorita" style="font-family:'Cinzel',serif;font-size:11px;color:rgba(245,232,208,0.5);letter-spacing:1px"></div>
+    </div>
     <div class="zombie-modal-stats" id="zombie-modal-stats"></div>
     <div id="zombie-modal-speciali-wrap" style="display:none">
       <div style="font-family:'Cinzel',serif;font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">REGOLE SPECIALI</div>

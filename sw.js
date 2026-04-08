@@ -1,4 +1,4 @@
-const CACHE = 'zc-v3';
+const CACHE = 'zc-v4';
 const ASSETS = [
   '/zombicide-ca/',
   '/zombicide-ca/index.html',
