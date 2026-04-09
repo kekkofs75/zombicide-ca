@@ -136,9 +136,9 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 .modal-close{position:absolute;top:20px;right:20px;width:32px;height:32px;background:rgba(255,255,255,0.08);border:none;border-radius:50%;color:var(--text-light);font-size:18px;cursor:pointer;line-height:32px;text-align:center;}
 
 /* ===== ZOMBIE BESTIARY ===== */
-.zombie-card{background:linear-gradient(135deg,rgba(42,26,16,0.9),rgba(20,8,5,0.95));border:1px solid rgba(180,40,40,0.3);border-radius:12px 12px 0 0;display:flex;cursor:pointer;position:relative;}
+.zombie-card{background:linear-gradient(135deg,rgba(42,26,16,0.9),rgba(20,8,5,0.95));border:1px solid rgba(180,40,40,0.3);border-radius:12px;display:flex;cursor:pointer;position:relative;}
 .zombie-card:active{border-color:rgba(200,60,60,0.6);}
-.zombie-avatar-wrap{width:90px;height:120px;flex-shrink:0;position:relative;cursor:pointer;overflow:hidden;border-radius:12px 0 0 0;}
+.zombie-avatar-wrap{width:90px;height:120px;flex-shrink:0;overflow:hidden;border-radius:12px 0 0 12px;}
 .zombie-avatar-wrap img{width:90px;height:120px;object-fit:cover;object-position:top center;}
 .zombie-avatar-placeholder{width:90px;min-height:120px;background:rgba(80,10,10,0.4);border-right:1px solid rgba(180,40,40,0.2);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;}
 .zombie-avatar-placeholder .z-tipo-icon{font-size:28px;opacity:0.7;}
@@ -153,21 +153,7 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 .zombie-tipo-badge.abomination{background:rgba(160,10,10,0.25);border:1px solid rgba(160,10,10,0.5);color:#ff7070;}
 .zombie-tipo-badge.necromancer{background:rgba(80,20,120,0.3);border:1px solid rgba(130,40,180,0.6);color:#cc88ff;}
 .zombie-tipo-badge.wolfz{background:rgba(90,90,90,0.3);border:1px solid rgba(140,140,140,0.5);color:#cccccc;}
-.zombie-tipo-badge.ratz{background:rgba(30,80,140,0.25);border:1px solid rgba(80,150,220,0.5);color:#7ec8e3;}
-/* Colored dot for bestiario group header */
-.zombie-tipo-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;display:inline-block;}
-.zombie-tipo-dot.walker{background:#88aaff;box-shadow:0 0 4px #88aaff;}
-.zombie-tipo-dot.runner{background:#ffbb44;box-shadow:0 0 4px #ffbb44;}
-.zombie-tipo-dot.fatty{background:#ffe066;box-shadow:0 0 4px #ffe066;}
-.zombie-tipo-dot.abomination{background:#ff7070;box-shadow:0 0 4px #ff7070;}
-.zombie-tipo-dot.necromancer{background:#cc88ff;box-shadow:0 0 4px #cc88ff;}
-.zombie-tipo-dot.wolfz{background:#cccccc;box-shadow:0 0 4px #cccccc;}
-.zombie-tipo-dot.dragon{background:#66dd88;box-shadow:0 0 4px #66dd88;}
-.zombie-tipo-dot.crow{background:#aaaaaa;box-shadow:0 0 4px #aaaaaa;}
-.zombie-tipo-dot.ratz{background:#7ec8e3;box-shadow:0 0 4px #7ec8e3;}
-.zombie-tipo-badge.dragon{background:rgba(20,100,40,0.3);border:1px solid rgba(40,160,70,0.6);color:#66dd88;}
-.zombie-tipo-badge.crow{background:rgba(20,20,20,0.5);border:1px solid rgba(80,80,80,0.6);color:#aaaaaa;}
-.zombie-tipo-badge.ratz{background:rgba(30,80,140,0.25);border:1px solid rgba(80,150,220,0.5);color:#7ec8e3;}
+.zombie-tipo-badge.ratz{background:rgba(20,100,180,0.15);border:1px solid rgba(100,190,255,0.5);color:#b8e4ff;}
 .zombie-priority{font-family:'Cinzel',serif;font-size:10px;color:rgba(245,232,208,0.5);letter-spacing:1px;}
 .zombie-priority span{color:var(--blood-light);font-weight:700;}
 .zombie-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:4px;}
@@ -175,7 +161,7 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 .zombie-stat-label{font-family:'Cinzel',serif;font-size:9px;color:rgba(245,232,208,0.45);letter-spacing:1px;}
 .zombie-stat-value{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--gold-light);}
 .zombie-wrap{margin-bottom:12px;}
-.zombie-wrap .skills-expanded{border-radius:0 0 12px 12px;background:linear-gradient(135deg,rgba(42,26,16,0.9),rgba(20,8,5,0.95));border:1px solid rgba(180,40,40,0.3);border-top:none;padding:10px 12px 12px;}
+.zombie-speciali-expanded{border-radius:0 0 12px 12px;background:linear-gradient(135deg,rgba(42,26,16,0.9),rgba(20,8,5,0.95));border:1px solid rgba(180,40,40,0.3);border-top:1px solid rgba(201,168,76,0.1);padding:10px 12px 12px;display:none;}.zombie-speciali-expanded.open{display:block;}
 .zombie-speciali-body.open{display:block;}
 
 /* Zombie modal stats */
@@ -555,42 +541,50 @@ function renderBestiario(filter) {
 }
 
 function zombieCardHtml(z) {
-  const tc = TIPO_COLORS[z.tipo] || {cls:'walker',icon:'🧟'};
+  const tc = TIPO_COLORS[z.tipo] || {cls:'walker'};
   const avatarHtml = z.avatar
-    ? `<img src="${z.avatar}" alt="${z.name}" style="width:90px;height:100%;object-fit:cover;object-position:top" onclick="openZombieModal(event,'${z.id}')">`
-    : `<div class="zombie-avatar-placeholder" onclick="openZombieModal(event,'${z.id}')"><div class="z-tipo-icon">${tc.icon}</div><div style="font-family:'Cinzel',serif;font-size:9px;color:rgba(245,232,208,0.4);letter-spacing:1px">${z.tipo.toUpperCase()}</div></div>`;
-  const specHtml = z.regole_speciali
-    ? `<button class="zombie-speciali-btn" onclick="toggleZombieSpeciali(event,'zsp-${z.id}')">▸ Regole Speciali</button>
-       <div class="zombie-speciali-body" id="zsp-${z.id}">${z.regole_speciali}</div>`
+    ? `<img src="${z.avatar}" alt="${z.name}" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block" onclick="openZombieModal(event,'${z.id}')">`
+    : `<div class="zombie-avatar-placeholder" onclick="openZombieModal(event,'${z.id}')"><div style="font-family:'Cinzel',serif;font-size:9px;color:rgba(245,232,208,0.4);letter-spacing:1px">${z.tipo.toUpperCase()}</div></div>`;
+  const specBtn = z.regole_speciali
+    ? `<button class="card-expand-btn" onclick="toggleZombieSpeciali(event,'zsp-${z.id}')">▸ Regole Speciali</button>`
     : '';
-  return `<div class="zombie-card">
-    <div class="zombie-avatar-wrap">${avatarHtml}</div>
-    <div class="zombie-body">
-      <div style="display:flex;justify-content:space-between;align-items:baseline">
-        <div class="zombie-name">${z.name}</div>
-        <div class="card-number">#${z.id.replace(/[A-Z]+/g,'')}</div>
+  const specSection = z.regole_speciali
+    ? `<div class="zombie-speciali-expanded" id="zsp-${z.id}"><div style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7">${z.regole_speciali}</div></div>`
+    : '';
+  return `<div style="margin-bottom:12px">
+    <div class="zombie-card">
+      <div class="zombie-avatar-wrap">${avatarHtml}</div>
+      <div class="zombie-body">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <div class="zombie-name">${z.name}</div>
+          <div class="card-number">#${z.id.replace(/[A-Z]+/g,'')}</div>
+        </div>
+        <div class="zombie-setname">${z.set}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+          <span class="zombie-tipo-badge ${tc.cls}">${z.tipo}</span>
+          <div style="text-align:right"><div class="zombie-stat-label">PRIORITÀ</div><div class="zombie-stat-value" style="color:var(--blood-light)">${z.priorita}</div></div>
+        </div>
+        <div class="zombie-stats-grid" style="margin-top:4px">
+          <div class="zombie-stat"><span class="zombie-stat-label">AZIONI</span><span class="zombie-stat-value">${z.azioni}</span></div>
+          <div class="zombie-stat"><span class="zombie-stat-label">DANNI</span><span class="zombie-stat-value">${z.danni}</span></div>
+          <div class="zombie-stat"><span class="zombie-stat-label">RESISTENZA</span><span class="zombie-stat-value">${z.resistenza}</span></div>
+          <div class="zombie-stat"><span class="zombie-stat-label">ESPERIENZA</span><span class="zombie-stat-value">${z.esperienza}</span></div>
+        </div>
+        ${specBtn}
       </div>
-      <div class="zombie-setname">${z.set}</div>
-      <div class="zombie-tipo-row">
-        <span class="zombie-tipo-badge ${tc.cls}">${z.tipo}</span>
-      </div>
-      <div class="zombie-stats-grid">
-        <div class="zombie-stat"><span class="zombie-stat-label">AZIONI</span><span class="zombie-stat-value">${z.azioni}</span></div>
-        <div class="zombie-stat"><span class="zombie-stat-label">PRIORITÀ</span><span class="zombie-stat-value" style="color:var(--blood-light)">${z.priorita}</span></div>
-        <div class="zombie-stat"><span class="zombie-stat-label">RESISTENZA</span><span class="zombie-stat-value">${z.resistenza}</span></div>
-        <div class="zombie-stat"><span class="zombie-stat-label">DANNI</span><span class="zombie-stat-value">${z.danni}</span></div>
-        <div class="zombie-stat"><span class="zombie-stat-label">ESPERIENZA</span><span class="zombie-stat-value">${z.esperienza}</span></div>
-      </div>
-      ${specHtml}
-    </div>
-  </div>`;
+    </div>${specSection}</div>`;
 }
 
 function toggleZombieSpeciali(e, id) {
   e.stopPropagation();
   const el = document.getElementById(id);
   if (!el) return;
+  // Also toggle rounded bottom on card
+  const card = el.previousElementSibling;
   const open = el.classList.toggle('open');
+  if (card && card.classList.contains('zombie-card')) {
+    card.style.borderRadius = open ? '12px 12px 0 0' : '12px';
+  }
   e.target.textContent = open ? '▾ Regole Speciali' : '▸ Regole Speciali';
 }
 
