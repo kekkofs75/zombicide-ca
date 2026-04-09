@@ -149,11 +149,11 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 .zombie-tipo-badge{font-family:'Cinzel',serif;font-size:10px;padding:2px 8px;border-radius:10px;letter-spacing:1px;}
 .zombie-tipo-badge.walker{background:rgba(30,60,120,0.3);border:1px solid rgba(60,110,200,0.6);color:#88aaff;}
 .zombie-tipo-badge.runner{background:rgba(200,120,0,0.25);border:1px solid rgba(200,120,0,0.5);color:#ffbb44;}
-.zombie-tipo-badge.fatty{background:rgba(160,130,0,0.25);border:1px solid rgba(200,160,0,0.5);color:#ffe066;}
+.zombie-tipo-badge.fatty{background:rgba(140,120,0,0.25);border:1px solid rgba(210,190,0,0.6);color:#fff176;}
 .zombie-tipo-badge.abomination{background:rgba(160,10,10,0.25);border:1px solid rgba(160,10,10,0.5);color:#ff7070;}
 .zombie-tipo-badge.necromancer{background:rgba(80,20,120,0.3);border:1px solid rgba(130,40,180,0.6);color:#cc88ff;}
 .zombie-tipo-badge.wolfz{background:rgba(90,90,90,0.3);border:1px solid rgba(140,140,140,0.5);color:#cccccc;}
-.zombie-tipo-badge.rat{background:rgba(80,50,20,0.3);border:1px solid rgba(130,90,40,0.6);color:#cc9955;}
+.zombie-tipo-badge.ratz{background:rgba(60,35,10,0.35);border:1px solid rgba(100,65,25,0.7);color:#a0733a;}
 /* Colored dot for bestiario group header */
 .zombie-tipo-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;display:inline-block;}
 .zombie-tipo-dot.walker{background:#88aaff;box-shadow:0 0 4px #88aaff;}
@@ -164,10 +164,10 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 .zombie-tipo-dot.wolfz{background:#cccccc;box-shadow:0 0 4px #cccccc;}
 .zombie-tipo-dot.dragon{background:#66dd88;box-shadow:0 0 4px #66dd88;}
 .zombie-tipo-dot.crow{background:#aaaaaa;box-shadow:0 0 4px #aaaaaa;}
-.zombie-tipo-dot.rat{background:#cc9955;box-shadow:0 0 4px #cc9955;}
+.zombie-tipo-dot.ratz{background:#8a5c28;box-shadow:0 0 4px #8a5c28;}
 .zombie-tipo-badge.dragon{background:rgba(20,100,40,0.3);border:1px solid rgba(40,160,70,0.6);color:#66dd88;}
 .zombie-tipo-badge.crow{background:rgba(20,20,20,0.5);border:1px solid rgba(80,80,80,0.6);color:#aaaaaa;}
-.zombie-tipo-badge.rat{background:rgba(80,50,20,0.3);border:1px solid rgba(130,90,40,0.6);color:#cc9955;}
+.zombie-tipo-badge.ratz{background:rgba(60,35,10,0.35);border:1px solid rgba(100,65,25,0.7);color:#a0733a;}
 .zombie-priority{font-family:'Cinzel',serif;font-size:10px;color:rgba(245,232,208,0.5);letter-spacing:1px;}
 .zombie-priority span{color:var(--blood-light);font-weight:700;}
 .zombie-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:4px;}
@@ -378,8 +378,8 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 <div class="screen" id="screen-bestiario">
   <button class="back-btn" onclick="showScreen('screen-home')">← HOME</button>
   <div class="section-title">Bestiario</div>
+  <div id="bestiary-set-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;"></div>
   <input class="search-bar" type="text" placeholder="Cerca uno zombie..." oninput="renderBestiario(this.value)" id="bestiary-search">
-  <div id="bestiary-set-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;"></div>
   <div id="bestiary-list"></div>
 </div>
 
@@ -454,12 +454,12 @@ function restartDraft(){S.currentPlayerIndex=0;S.takenIds=new Set();S.playerResu
 
 // ===== BESTIARY =====
 const TIPO_COLORS = {
-  'Rat':         {cls:'rat',         order:1},
+  'Ratz':        {cls:'ratz',        order:1},
   'Walker':      {cls:'walker',      order:2},
   'Fatty':       {cls:'fatty',       order:3},
   'Abomination': {cls:'abomination', order:3},
   'Runner':      {cls:'runner',      order:4},
-  'Zombie Wolfz':{cls:'wolfz',       order:5},
+  'Wolfz':       {cls:'wolfz',       order:5},
   'Necromancer': {cls:'necromancer', order:6},
   'Dragon':      {cls:'dragon',      order:7},
   'Crow':        {cls:'crow',        order:8},
@@ -469,23 +469,35 @@ let bestiary_sort = 'tipo'; // 'tipo' | 'priorita' | 'nome'
 
 let bestiary_setFilter = null;
 
+// Normalize tipo names on load
+ZOMBIES.forEach(z => {
+  if (z.tipo === 'Zombie Wolfz') z.tipo = 'Wolfz';
+  if (z.tipo === 'Rat') z.tipo = 'Ratz';
+});
+
 function initBestiario() {
   const sets = [...new Set(ZOMBIES.map(z => z.set))];
   const chips = document.getElementById('bestiary-set-chips');
   const sorts = [
     {k:'tipo',    label:'Per Tipo'},
-    {k:'priorita',label:'Per Priorità'},
     {k:'nome',    label:'A-Z'},
   ];
-  chips.innerHTML =
-    '<div style="display:flex;gap:6px;flex-wrap:wrap;width:100%;margin-bottom:8px">' +
-    sorts.map(s =>
-      `<div class="set-chip ${bestiary_sort===s.k?'active':''}" style="font-size:10px;padding:6px 12px" onclick="setBestiarioSort('${s.k}')">${s.label}</div>`
-    ).join('') +
-    '</div>' +
-    sets.map(s =>
-      `<div class="set-chip ${bestiary_setFilter===s?'active':''}" onclick="toggleBestiarioSet('${s.replace(/'/g,"\\'")}');">${s}</div>`
-    ).join('');
+  // Set chips (above search)
+  chips.innerHTML = sets.map(s =>
+    `<div class="set-chip ${bestiary_setFilter===s?'active':''}" onclick="toggleBestiarioSet('${s.replace(/'/g,"\\'")}');">${s}</div>`
+  ).join('');
+  // Sort buttons (below search) - rendered into separate div
+  let sortDiv = document.getElementById('bestiary-sort-btns');
+  if (!sortDiv) {
+    sortDiv = document.createElement('div');
+    sortDiv.id = 'bestiary-sort-btns';
+    sortDiv.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px';
+    const searchBar = document.getElementById('bestiary-search');
+    searchBar.parentNode.insertBefore(sortDiv, searchBar.nextSibling);
+  }
+  sortDiv.innerHTML = sorts.map(s =>
+    `<div class="set-chip ${bestiary_sort===s.k?'active':''}" style="font-size:10px;padding:6px 12px" onclick="setBestiarioSort('${s.k}')">${s.label}</div>`
+  ).join('');
   renderBestiario(document.getElementById('bestiary-search')?.value || '');
 }
 
@@ -561,12 +573,12 @@ function zombieCardHtml(z) {
       <div class="zombie-setname">${z.set}</div>
       <div class="zombie-tipo-row">
         <span class="zombie-tipo-badge ${tc.cls}">${z.tipo}</span>
-        <span class="zombie-priority">Priorità <span>${z.priorita}</span></span>
       </div>
       <div class="zombie-stats-grid">
         <div class="zombie-stat"><span class="zombie-stat-label">AZIONI</span><span class="zombie-stat-value">${z.azioni}</span></div>
-        <div class="zombie-stat"><span class="zombie-stat-label">DANNI</span><span class="zombie-stat-value">${z.danni}</span></div>
+        <div class="zombie-stat"><span class="zombie-stat-label">PRIORITÀ</span><span class="zombie-stat-value" style="color:var(--blood-light)">${z.priorita}</span></div>
         <div class="zombie-stat"><span class="zombie-stat-label">RESISTENZA</span><span class="zombie-stat-value">${z.resistenza}</span></div>
+        <div class="zombie-stat"><span class="zombie-stat-label">DANNI</span><span class="zombie-stat-value">${z.danni}</span></div>
         <div class="zombie-stat"><span class="zombie-stat-label">ESPERIENZA</span><span class="zombie-stat-value">${z.esperienza}</span></div>
       </div>
       ${specHtml}
@@ -585,34 +597,8 @@ function toggleZombieSpeciali(e, id) {
 function openZombieModal(e, id) {
   e.stopPropagation();
   const z = ZOMBIES.find(x => x.id === id);
-  if (!z) return;
-  const tc = TIPO_COLORS[z.tipo] || {cls:'walker'};
-  document.getElementById('zombie-modal-name').textContent = z.name;
-  document.getElementById('zombie-modal-set').textContent = z.set;
-  const tipoBadge = document.getElementById('zombie-modal-tipo-badge');
-  tipoBadge.className = `zombie-modal-tipo zombie-tipo-badge ${tc.cls}`;
-  tipoBadge.textContent = z.tipo;
-  document.getElementById('zombie-modal-priorita').textContent = `Priorità ${z.priorita}`;
-  document.getElementById('zombie-modal-stats').innerHTML = `
-    <div class="zombie-modal-stat"><div class="zombie-modal-stat-label">AZIONI</div><div class="zombie-modal-stat-value">${z.azioni}</div></div>
-    <div class="zombie-modal-stat"><div class="zombie-modal-stat-label">DANNI</div><div class="zombie-modal-stat-value">${z.danni}</div></div>
-    <div class="zombie-modal-stat"><div class="zombie-modal-stat-label">RESISTENZA</div><div class="zombie-modal-stat-value">${z.resistenza}</div></div>
-    <div class="zombie-modal-stat"><div class="zombie-modal-stat-label">ESPERIENZA</div><div class="zombie-modal-stat-value">${z.esperienza}</div></div>
-  `;
-  const imgWrap = document.getElementById('zombie-modal-img-wrap');
-  if (z.card) {
-    document.getElementById('zombie-modal-img').src = z.card;
-    imgWrap.style.display = 'block';
-  } else {
-    imgWrap.style.display = 'none';
-  }
-  const specWrap = document.getElementById('zombie-modal-speciali-wrap');
-  if (z.regole_speciali) {
-    document.getElementById('zombie-modal-speciali').textContent = z.regole_speciali;
-    specWrap.style.display = 'block';
-  } else {
-    specWrap.style.display = 'none';
-  }
+  if (!z || !z.card) return;
+  document.getElementById('zombie-modal-img').src = z.card;
   document.getElementById('zombie-modal').classList.add('open');
 }
 function closeZombieModal() { document.getElementById('zombie-modal').classList.remove('open'); }
@@ -632,26 +618,13 @@ initBestiario();
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
 
-<!-- MODAL Zombie Detail -->
+<!-- MODAL Zombie Detail (image only, like survivor card modal) -->
 <div class="modal-overlay" id="zombie-modal" onclick="if(event.target.id==='zombie-modal')closeZombieModal()">
-  <div class="modal-sheet" style="padding:16px 16px 36px;max-height:90vh;overflow-y:auto;">
+  <div class="modal-sheet" style="padding:16px 12px 32px">
     <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeZombieModal()" style="position:sticky;top:0;z-index:10;">×</button>
-    <div id="zombie-modal-img-wrap" style="text-align:center;margin-bottom:16px;display:none">
+    <button class="modal-close" onclick="closeZombieModal()">×</button>
+    <div style="margin-top:8px;text-align:center">
       <img id="zombie-modal-img" src="" alt="" style="max-width:100%;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.6)">
-    </div>
-    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:4px">
-      <div id="zombie-modal-name" style="font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--text-light)"></div>
-    </div>
-    <div id="zombie-modal-set" style="font-size:11px;color:var(--fire);letter-spacing:1px;font-style:italic;margin-bottom:10px"></div>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
-      <div id="zombie-modal-tipo-badge" class="zombie-modal-tipo"></div>
-      <div id="zombie-modal-priorita" style="font-family:'Cinzel',serif;font-size:11px;color:rgba(245,232,208,0.5);letter-spacing:1px"></div>
-    </div>
-    <div class="zombie-modal-stats" id="zombie-modal-stats"></div>
-    <div id="zombie-modal-speciali-wrap" style="display:none">
-      <div style="font-family:'Cinzel',serif;font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">REGOLE SPECIALI</div>
-      <div id="zombie-modal-speciali" style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7"></div>
     </div>
   </div>
 </div>
