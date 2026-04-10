@@ -194,6 +194,24 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 
 
 .stat-asterisk{font-size:9px;color:#ff9900;vertical-align:super;font-weight:900;line-height:0;}
+
+/* ===== ZOMBI DRAFT ===== */
+.zd-section{margin-bottom:0;}
+.zd-section-title{font-family:'Cinzel',serif;font-size:13px;color:var(--gold);letter-spacing:2px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.zd-section-title::after{content:'';flex:1;height:1px;background:rgba(201,168,76,0.3);}
+.zd-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(200,80,0,0.4),transparent);margin:20px 0;}
+.zd-btns{display:flex;gap:10px;margin-bottom:14px;}
+.zd-btn{flex:1;padding:12px 8px;background:linear-gradient(135deg,var(--blood),var(--blood-light));border:1px solid rgba(200,80,0,0.5);border-radius:10px;color:var(--text-light);font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;text-align:center;}
+.zd-btn:disabled{opacity:0.35;cursor:default;}
+.zd-btn:not(:disabled):active{transform:scale(0.97);}
+.zd-btn-free{background:transparent;border:1px solid rgba(201,168,76,0.35);color:var(--gold);}
+.zd-btn-free:not(:disabled):active{background:rgba(201,168,76,0.1);}
+.zd-empty{font-family:'Cinzel',serif;font-size:11px;color:rgba(245,232,208,0.3);letter-spacing:1px;text-align:center;padding:12px 0;}
+.zd-card-wrap{position:relative;margin-bottom:12px;}
+.zd-remove-btn{position:absolute;top:6px;right:6px;width:24px;height:24px;background:rgba(139,0,0,0.7);border:1px solid rgba(200,60,60,0.5);border-radius:50%;color:white;font-size:14px;line-height:24px;text-align:center;cursor:pointer;z-index:5;font-weight:900;}
+.zd-remove-btn:active{background:rgba(200,0,0,0.9);}
+.zd-nuova-partita{margin-top:24px;}
+
 </style>
 </head>
 <body>
@@ -230,10 +248,9 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
       <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="12" y="10" width="20" height="22" rx="6" fill="#c9a84c" opacity="0.7"/><line x1="16" y1="17" x2="20" y2="21" stroke="#080003" stroke-width="2" stroke-linecap="round"/><line x1="20" y1="17" x2="16" y2="21" stroke="#080003" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="19" r="3" fill="#080003"/><rect x="15" y="26" width="14" height="4" rx="1" fill="#080003"/><rect x="17" y="26" width="3" height="4" fill="#c9a84c" opacity="0.7"/><rect x="22" y="26" width="3" height="4" fill="#c9a84c" opacity="0.7"/><rect x="19" y="32" width="6" height="5" rx="2" fill="#c9a84c" opacity="0.5"/></svg>
       <div class="home-btn-text"><div class="home-btn-title">Bestiario</div><div class="home-btn-desc">Zombie, Abomini, Necromanti e le loro caratteristiche</div></div>
     </button>
-    <button class="home-btn" disabled>
+    <button class="home-btn" onclick="showScreen('screen-zombidraft')">
       <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="16" r="8" fill="#c9a84c" opacity="0.6"/><path d="M22 8 L26 14 L32 15 L28 20 L29 26 L22 23 L15 26 L16 20 L12 15 L18 14 Z" fill="#8b0000" opacity="0.8"/><rect x="10" y="30" width="24" height="3" rx="1.5" fill="#c9a84c" opacity="0.4"/><rect x="14" y="35" width="16" height="3" rx="1.5" fill="#c9a84c" opacity="0.3"/></svg>
-      <div class="home-btn-text"><div class="home-btn-title">Zombie Draft</div><div class="home-btn-desc">Estrai Abomini e Necromanti per la partita</div></div>
-      <div class="home-btn-badge">PRESTO</div>
+      <div class="home-btn-text"><div class="home-btn-title">Zombi Draft</div><div class="home-btn-desc">Estrai Abomini e Necromanti per la partita</div></div>
     </button>
   </div>
 </div>
@@ -381,6 +398,48 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
   <div id="bestiary-list"></div>
 </div>
 
+
+<!-- ZOMBI DRAFT -->
+<div class="screen" id="screen-zombidraft">
+  <button class="back-btn" onclick="showScreen('screen-home')">← HOME</button>
+  <div class="section-title">Zombi Draft</div>
+
+  <!-- ABOMINI -->
+  <div class="zd-section">
+    <div class="zd-section-title">☠ ABOMINI</div>
+    <div class="zd-btns">
+      <button class="zd-btn" id="zd-btn-abom" onclick="zdDraft('abomination')">🎲 PESCA</button>
+      <button class="zd-btn zd-btn-free" id="zd-btn-abom-free" onclick="zdOpenFree('abomination')">✦ SCELTA LIBERA</button>
+    </div>
+    <div id="zd-list-abomination"><div class="zd-empty">Nessun Abominio estratto</div></div>
+  </div>
+
+  <div class="zd-divider"></div>
+
+  <!-- NECROMANTI -->
+  <div class="zd-section">
+    <div class="zd-section-title">🔮 NECROMANTI</div>
+    <div class="zd-btns">
+      <button class="zd-btn" id="zd-btn-necro" onclick="zdDraft('necromancer')">🎲 PESCA</button>
+      <button class="zd-btn zd-btn-free" id="zd-btn-necro-free" onclick="zdOpenFree('necromancer')">✦ SCELTA LIBERA</button>
+    </div>
+    <div id="zd-list-necromancer"><div class="zd-empty">Nessun Necromante estratto</div></div>
+  </div>
+
+  <button class="btn-primary zd-nuova-partita" onclick="zdReset()">⚔ NUOVA PARTITA</button>
+</div>
+
+<!-- ZOMBI DRAFT FREE PICK -->
+<div class="screen" id="screen-zd-freepick">
+  <button class="back-btn" onclick="zdCancelFree()">← INDIETRO</button>
+  <div class="section-title" id="zd-free-title">Scelta Libera</div>
+  <input class="search-bar" type="text" placeholder="Cerca..." oninput="zdFilterFree(this.value)" id="zd-free-search">
+  <div class="survivors-grid" id="zd-free-grid" style="margin-bottom:90px"></div>
+  <div class="draft-actions">
+    <button class="btn-primary" id="zd-btn-confirm-free" onclick="zdConfirmFree()" disabled>CONFERMA</button>
+  </div>
+</div>
+
 <!-- MODAL Skill -->
 <div class="modal-overlay" id="skill-modal" onclick="if(event.target.id==='skill-modal')closeSkillModal()">
   <div class="modal-sheet">
@@ -404,10 +463,158 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
   </div>
 </div>
 
-<script src="data.js"></script>
+<script src="data.js">
+// ===== ZOMBI DRAFT =====
+const ZD = {
+  extracted: { abomination: [], necromancer: [] },
+  freeType: null,
+  freeTempId: null,
+};
+
+function zdGetPool(tipo) {
+  return ZOMBIES.filter(z => z.tipo.toLowerCase() === tipo.toLowerCase());
+}
+function zdExtractedIds(tipo) {
+  return new Set(ZD.extracted[tipo.toLowerCase()].map(z => z.id));
+}
+function zdAvailable(tipo) {
+  const taken = zdExtractedIds(tipo);
+  return zdGetPool(tipo).filter(z => !taken.has(z.id));
+}
+
+function zdDraft(tipo) {
+  const avail = zdAvailable(tipo);
+  if (!avail.length) return;
+  const z = avail[Math.floor(Math.random() * avail.length)];
+  ZD.extracted[tipo.toLowerCase()].push({...z, _manual: false});
+  zdRenderList(tipo);
+  zdUpdateButtons(tipo);
+}
+
+function zdRenderList(tipo) {
+  const key = tipo.toLowerCase();
+  const list = document.getElementById('zd-list-' + key);
+  const items = ZD.extracted[key];
+  if (!items.length) {
+    list.innerHTML = '<div class="zd-empty">Nessun ' + (key==='abomination'?'Abominio':'Necromante') + ' estratto</div>';
+    return;
+  }
+  list.innerHTML = items.map((z,i) => `
+    <div class="zd-card-wrap">
+      <span class="zd-remove-btn" onclick="zdRemove('${key}',${i})">×</span>
+      ${zombieCardHtml(z)}
+    </div>`).join('');
+}
+
+function zdRemove(tipo, idx) {
+  ZD.extracted[tipo].splice(idx, 1);
+  zdRenderList(tipo);
+  zdUpdateButtons(tipo);
+}
+
+function zdUpdateButtons(tipo) {
+  const key = tipo.toLowerCase();
+  const avail = zdAvailable(tipo);
+  const btnDraft = document.getElementById('zd-btn-' + (key==='abomination'?'abom':'necro'));
+  const btnFree  = document.getElementById('zd-btn-' + (key==='abomination'?'abom':'necro') + '-free');
+  if (btnDraft) btnDraft.disabled = avail.length === 0;
+  if (btnFree)  btnFree.disabled  = avail.length === 0;
+}
+
+function zdOpenFree(tipo) {
+  ZD.freeType = tipo.toLowerCase();
+  ZD.freeTempId = null;
+  document.getElementById('zd-free-title').textContent =
+    tipo.toLowerCase() === 'abomination' ? 'Scelta Libera — Abomini' : 'Scelta Libera — Necromanti';
+  document.getElementById('zd-free-search').value = '';
+  document.getElementById('zd-btn-confirm-free').disabled = true;
+  zdRenderFreeGrid('');
+  showScreen('screen-zd-freepick');
+}
+
+function zdRenderFreeGrid(filter) {
+  const avail = zdAvailable(ZD.freeType).filter(z =>
+    z.name.toLowerCase().includes((filter||'').toLowerCase())
+  );
+  const grid = document.getElementById('zd-free-grid');
+  if (!avail.length) {
+    grid.innerHTML = '<div style="text-align:center;color:rgba(245,232,208,0.4);padding:20px;font-family:Cinzel,serif;font-size:12px">Nessuno disponibile</div>';
+    document.getElementById('zd-btn-confirm-free').disabled = true;
+    return;
+  }
+  grid.innerHTML = avail.map(z => {
+    const sel = ZD.freeTempId === z.id;
+    const tc = TIPO_COLORS[z.tipo] || {cls:'abomination'};
+    const specBtn = z.regole_speciali
+      ? `<button class="card-expand-btn" onclick="toggleZombieSpeciali(event,'zdsp-${z.id}')">▸ Regole Speciali</button>`
+      : '';
+    const specSection = z.regole_speciali
+      ? `<div class="zombie-speciali-expanded" id="zdsp-${z.id}"><div style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7">${z.regole_speciali}</div></div>`
+      : '';
+    const avatarHtml = z.avatar
+      ? `<img src="${z.avatar}" alt="${z.name}" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block" onclick="openZombieModal(event,'${z.id}')">`
+      : `<div class="zombie-avatar-placeholder"><div style="font-family:'Cinzel',serif;font-size:9px;color:rgba(245,232,208,0.4)">${z.tipo.toUpperCase()}</div></div>`;
+    return `<div style="margin-bottom:12px">
+      <div class="zombie-card${sel?' selected':''}" style="${sel?'border-color:var(--gold);box-shadow:0 0 20px rgba(201,168,76,0.3)':''}" onclick="zdSelectFree('${z.id}')">
+        ${sel?'<div style=\'position:absolute;top:8px;right:8px;width:24px;height:24px;background:var(--gold);color:#000;border-radius:50%;font-size:13px;font-weight:900;line-height:24px;text-align:center;z-index:2\'>✓</div>':''}
+        <div class="zombie-avatar-wrap">${avatarHtml}</div>
+        <div class="zombie-body">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div class="zombie-name">${z.name}</div>
+            <div class="card-number">#${z.id.replace(/[A-Z]+/g,'')}</div>
+          </div>
+          <div class="zombie-setname">${z.set}</div>
+          <div class="zombie-stats-grid" style="margin-top:4px">
+            <div class="zombie-stat"><span class="zombie-tipo-badge ${tc.cls}">${z.tipo}</span></div>
+            <div class="zombie-stat"><span class="zombie-stat-label">PRIORITÀ</span><span class="zombie-stat-value" style="color:var(--blood-light)">${z.priorita}</span></div>
+            <div class="zombie-stat"><span class="zombie-stat-label">AZIONI</span><span class="zombie-stat-value">${fmtStat(z.azioni)}</span></div>
+            <div class="zombie-stat"><span class="zombie-stat-label">DANNI</span><span class="zombie-stat-value">${fmtStat(z.danni)}</span></div>
+            <div class="zombie-stat"><span class="zombie-stat-label">RESISTENZA</span><span class="zombie-stat-value">${fmtStat(z.resistenza)}</span></div>
+            <div class="zombie-stat"><span class="zombie-stat-label">ESPERIENZA</span><span class="zombie-stat-value">${fmtStat(z.esperienza)}</span></div>
+          </div>
+          ${specBtn}
+        </div>
+      </div>${specSection}</div>`;
+  }).join('');
+}
+
+function zdSelectFree(id) {
+  ZD.freeTempId = ZD.freeTempId === id ? null : id;
+  zdRenderFreeGrid(document.getElementById('zd-free-search').value);
+  document.getElementById('zd-btn-confirm-free').disabled = !ZD.freeTempId;
+}
+function zdFilterFree(v) { zdRenderFreeGrid(v); }
+function zdCancelFree() { showScreen('screen-zombidraft'); }
+function zdConfirmFree() {
+  if (!ZD.freeTempId) return;
+  const z = ZOMBIES.find(x => x.id === ZD.freeTempId);
+  if (!z) return;
+  ZD.extracted[ZD.freeType].push({...z, _manual: true});
+  zdRenderList(ZD.freeType);
+  zdUpdateButtons(ZD.freeType);
+  showScreen('screen-zombidraft');
+}
+
+function zdReset() {
+  ZD.extracted = { abomination: [], necromancer: [] };
+  zdRenderList('abomination');
+  zdRenderList('necromancer');
+  zdUpdateButtons('abomination');
+  zdUpdateButtons('necromancer');
+}
+
+function zdInit() {
+  zdRenderList('abomination');
+  zdRenderList('necromancer');
+  zdUpdateButtons('abomination');
+  zdUpdateButtons('necromancer');
+}
+
+</script>
 <script>
 function showScreen(id,pushState=true){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);if(id==='screen-capacita'){document.getElementById('capacita-search').value='';renderCapacita('');}
-  if(id==='screen-bestiario'){document.getElementById('bestiary-search').value='';bestiary_setFilter=null;initBestiario();}if(pushState)history.pushState({screen:id},'','');}
+  if(id==='screen-bestiario'){document.getElementById('bestiary-search').value='';bestiary_setFilter=null;initBestiario();}
+  if(id==='screen-zombidraft'){zdInit();}if(pushState)history.pushState({screen:id},'','');}
 window.addEventListener('popstate',e=>{const cur=document.querySelector('.screen.active');if(!cur)return;if(cur.id==='screen-home'){history.pushState({screen:'screen-home'},'','');return;}if(cur.id==='screen-freepick'){showScreen('screen-draft',false);return;}showScreen('screen-home',false);});
 history.pushState({screen:'screen-home'},'','');
 
@@ -460,7 +667,7 @@ const TIPO_COLORS = {
   'Wolfz':       {cls:'wolfz',       order:5},
   'Necromancer': {cls:'necromancer', order:6},
   'Dragon':      {cls:'dragon',      order:7},
-  'Crow':        {cls:'crow',        order:8},
+  'Crowz':       {cls:'crowz',       order:8},
   'Ratz':        {cls:'ratz',        order:1},
 };
 
@@ -472,14 +679,14 @@ let bestiary_setFilter = null;
 ZOMBIES.forEach(z => {
   if (z.tipo === 'Zombie Wolfz') z.tipo = 'Wolfz';
   if (z.tipo === 'Rat') z.tipo = 'Ratz';
-  if (z.tipo === 'Crow') z.tipo = 'Crow'; // already correct
+  if (z.tipo === 'Crow') z.tipo = 'Crowz';
 });
 
 function initBestiario() {
   const sets = [...new Set(ZOMBIES.map(z => z.set))];
   const chips = document.getElementById('bestiary-set-chips');
   const sorts = [
-    {k:'tipo',    label:'Per Tipo'},
+    {k:'tipo',    label:'Tipo'},
     {k:'nome',    label:'A-Z'},
   ];
   // Set chips (above search)
@@ -521,13 +728,13 @@ function renderBestiario(filter) {
   // Sort
   if (bestiary_sort === 'tipo') {
     // Sort by priority, then by tipo order within same priority, then name
-    const TIPO_SUBORDER = {'Fatty':0,'Abomination':1};
     filtered.sort((a,b) => {
       if (a.priorita !== b.priorita) return a.priorita - b.priorita;
-      const as = TIPO_SUBORDER[a.tipo] ?? 0;
-      const bs = TIPO_SUBORDER[b.tipo] ?? 0;
-      if (as !== bs) return as - bs;
-      return a.name.localeCompare(b.name);
+      if (a.tipo !== b.tipo) return a.tipo.localeCompare(b.tipo);
+      // sort by card number (digits only)
+      const na = parseInt(a.id.replace(/[A-Z]+/g,'')) || 0;
+      const nb = parseInt(b.id.replace(/[A-Z]+/g,'')) || 0;
+      return na - nb;
     });
   } else if (bestiary_sort === 'priorita') {
     filtered.sort((a,b) => a.priorita !== b.priorita ? a.priorita - b.priorita : a.name.localeCompare(b.name));
@@ -627,7 +834,155 @@ function toggleAccordion(id) {
 
 initSets();
 initBestiario();
+zdInit();
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+
+// ===== ZOMBI DRAFT =====
+const ZD = {
+  extracted: { abomination: [], necromancer: [] },
+  freeType: null,
+  freeTempId: null,
+};
+
+function zdGetPool(tipo) {
+  return ZOMBIES.filter(z => z.tipo.toLowerCase() === tipo.toLowerCase());
+}
+function zdExtractedIds(tipo) {
+  return new Set(ZD.extracted[tipo.toLowerCase()].map(z => z.id));
+}
+function zdAvailable(tipo) {
+  const taken = zdExtractedIds(tipo);
+  return zdGetPool(tipo).filter(z => !taken.has(z.id));
+}
+
+function zdDraft(tipo) {
+  const avail = zdAvailable(tipo);
+  if (!avail.length) return;
+  const z = avail[Math.floor(Math.random() * avail.length)];
+  ZD.extracted[tipo.toLowerCase()].push({...z, _manual: false});
+  zdRenderList(tipo);
+  zdUpdateButtons(tipo);
+}
+
+function zdRenderList(tipo) {
+  const key = tipo.toLowerCase();
+  const list = document.getElementById('zd-list-' + key);
+  const items = ZD.extracted[key];
+  if (!items.length) {
+    list.innerHTML = '<div class="zd-empty">Nessun ' + (key==='abomination'?'Abominio':'Necromante') + ' estratto</div>';
+    return;
+  }
+  list.innerHTML = items.map((z,i) => `
+    <div class="zd-card-wrap">
+      <span class="zd-remove-btn" onclick="zdRemove('${key}',${i})">×</span>
+      ${zombieCardHtml(z)}
+    </div>`).join('');
+}
+
+function zdRemove(tipo, idx) {
+  ZD.extracted[tipo].splice(idx, 1);
+  zdRenderList(tipo);
+  zdUpdateButtons(tipo);
+}
+
+function zdUpdateButtons(tipo) {
+  const key = tipo.toLowerCase();
+  const avail = zdAvailable(tipo);
+  const btnDraft = document.getElementById('zd-btn-' + (key==='abomination'?'abom':'necro'));
+  const btnFree  = document.getElementById('zd-btn-' + (key==='abomination'?'abom':'necro') + '-free');
+  if (btnDraft) btnDraft.disabled = avail.length === 0;
+  if (btnFree)  btnFree.disabled  = avail.length === 0;
+}
+
+function zdOpenFree(tipo) {
+  ZD.freeType = tipo.toLowerCase();
+  ZD.freeTempId = null;
+  document.getElementById('zd-free-title').textContent =
+    tipo.toLowerCase() === 'abomination' ? 'Scelta Libera — Abomini' : 'Scelta Libera — Necromanti';
+  document.getElementById('zd-free-search').value = '';
+  document.getElementById('zd-btn-confirm-free').disabled = true;
+  zdRenderFreeGrid('');
+  showScreen('screen-zd-freepick');
+}
+
+function zdRenderFreeGrid(filter) {
+  const avail = zdAvailable(ZD.freeType).filter(z =>
+    z.name.toLowerCase().includes((filter||'').toLowerCase())
+  );
+  const grid = document.getElementById('zd-free-grid');
+  if (!avail.length) {
+    grid.innerHTML = '<div style="text-align:center;color:rgba(245,232,208,0.4);padding:20px;font-family:Cinzel,serif;font-size:12px">Nessuno disponibile</div>';
+    document.getElementById('zd-btn-confirm-free').disabled = true;
+    return;
+  }
+  grid.innerHTML = avail.map(z => {
+    const sel = ZD.freeTempId === z.id;
+    const tc = TIPO_COLORS[z.tipo] || {cls:'abomination'};
+    const specBtn = z.regole_speciali
+      ? `<button class="card-expand-btn" onclick="toggleZombieSpeciali(event,'zdsp-${z.id}')">▸ Regole Speciali</button>`
+      : '';
+    const specSection = z.regole_speciali
+      ? `<div class="zombie-speciali-expanded" id="zdsp-${z.id}"><div style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7">${z.regole_speciali}</div></div>`
+      : '';
+    const avatarHtml = z.avatar
+      ? `<img src="${z.avatar}" alt="${z.name}" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block" onclick="openZombieModal(event,'${z.id}')">`
+      : `<div class="zombie-avatar-placeholder"><div style="font-family:'Cinzel',serif;font-size:9px;color:rgba(245,232,208,0.4)">${z.tipo.toUpperCase()}</div></div>`;
+    return `<div style="margin-bottom:12px">
+      <div class="zombie-card${sel?' selected':''}" style="${sel?'border-color:var(--gold);box-shadow:0 0 20px rgba(201,168,76,0.3)':''}" onclick="zdSelectFree('${z.id}')">
+        ${sel?'<div style=\'position:absolute;top:8px;right:8px;width:24px;height:24px;background:var(--gold);color:#000;border-radius:50%;font-size:13px;font-weight:900;line-height:24px;text-align:center;z-index:2\'>✓</div>':''}
+        <div class="zombie-avatar-wrap">${avatarHtml}</div>
+        <div class="zombie-body">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div class="zombie-name">${z.name}</div>
+            <div class="card-number">#${z.id.replace(/[A-Z]+/g,'')}</div>
+          </div>
+          <div class="zombie-setname">${z.set}</div>
+          <div class="zombie-stats-grid" style="margin-top:4px">
+            <div class="zombie-stat"><span class="zombie-tipo-badge ${tc.cls}">${z.tipo}</span></div>
+            <div class="zombie-stat"><span class="zombie-stat-label">PRIORITÀ</span><span class="zombie-stat-value" style="color:var(--blood-light)">${z.priorita}</span></div>
+            <div class="zombie-stat"><span class="zombie-stat-label">AZIONI</span><span class="zombie-stat-value">${fmtStat(z.azioni)}</span></div>
+            <div class="zombie-stat"><span class="zombie-stat-label">DANNI</span><span class="zombie-stat-value">${fmtStat(z.danni)}</span></div>
+            <div class="zombie-stat"><span class="zombie-stat-label">RESISTENZA</span><span class="zombie-stat-value">${fmtStat(z.resistenza)}</span></div>
+            <div class="zombie-stat"><span class="zombie-stat-label">ESPERIENZA</span><span class="zombie-stat-value">${fmtStat(z.esperienza)}</span></div>
+          </div>
+          ${specBtn}
+        </div>
+      </div>${specSection}</div>`;
+  }).join('');
+}
+
+function zdSelectFree(id) {
+  ZD.freeTempId = ZD.freeTempId === id ? null : id;
+  zdRenderFreeGrid(document.getElementById('zd-free-search').value);
+  document.getElementById('zd-btn-confirm-free').disabled = !ZD.freeTempId;
+}
+function zdFilterFree(v) { zdRenderFreeGrid(v); }
+function zdCancelFree() { showScreen('screen-zombidraft'); }
+function zdConfirmFree() {
+  if (!ZD.freeTempId) return;
+  const z = ZOMBIES.find(x => x.id === ZD.freeTempId);
+  if (!z) return;
+  ZD.extracted[ZD.freeType].push({...z, _manual: true});
+  zdRenderList(ZD.freeType);
+  zdUpdateButtons(ZD.freeType);
+  showScreen('screen-zombidraft');
+}
+
+function zdReset() {
+  ZD.extracted = { abomination: [], necromancer: [] };
+  zdRenderList('abomination');
+  zdRenderList('necromancer');
+  zdUpdateButtons('abomination');
+  zdUpdateButtons('necromancer');
+}
+
+function zdInit() {
+  zdRenderList('abomination');
+  zdRenderList('necromancer');
+  zdUpdateButtons('abomination');
+  zdUpdateButtons('necromancer');
+}
+
 </script>
 
 <!-- MODAL Zombie Detail (image only, like survivor card modal) -->
