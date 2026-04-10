@@ -192,6 +192,8 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 .rules-phase-item strong{color:var(--gold-light);}
 .rules-note{font-size:11px;color:rgba(245,232,208,0.45);font-style:italic;margin-top:8px;line-height:1.5;}
 
+
+.stat-asterisk{font-size:9px;color:#ff9900;vertical-align:super;font-weight:900;line-height:0;}
 </style>
 </head>
 <body>
@@ -459,6 +461,7 @@ const TIPO_COLORS = {
   'Necromancer': {cls:'necromancer', order:6},
   'Dragon':      {cls:'dragon',      order:7},
   'Crow':        {cls:'crow',        order:8},
+  'Ratz':        {cls:'ratz',        order:1},
 };
 
 let bestiary_sort = 'tipo'; // 'tipo' | 'priorita' | 'nome'
@@ -469,6 +472,7 @@ let bestiary_setFilter = null;
 ZOMBIES.forEach(z => {
   if (z.tipo === 'Zombie Wolfz') z.tipo = 'Wolfz';
   if (z.tipo === 'Rat') z.tipo = 'Ratz';
+  if (z.tipo === 'Crow') z.tipo = 'Crow'; // already correct
 });
 
 function initBestiario() {
@@ -550,6 +554,12 @@ function renderBestiario(filter) {
   }
 }
 
+function fmtStat(v) {
+  const s = String(v);
+  if (s.endsWith('*')) return s.slice(0,-1) + '<span class="stat-asterisk">*</span>';
+  return s;
+}
+
 function zombieCardHtml(z) {
   const tc = TIPO_COLORS[z.tipo] || {cls:'walker'};
   const avatarHtml = z.avatar
@@ -573,10 +583,10 @@ function zombieCardHtml(z) {
         <div class="zombie-stats-grid" style="margin-top:4px">
           <div class="zombie-stat"><span class="zombie-tipo-badge ${tc.cls}">${z.tipo}</span></div>
           <div class="zombie-stat"><span class="zombie-stat-label">PRIORITÀ</span><span class="zombie-stat-value" style="color:var(--blood-light)">${z.priorita}</span></div>
-          <div class="zombie-stat"><span class="zombie-stat-label">AZIONI</span><span class="zombie-stat-value">${z.azioni}</span></div>
-          <div class="zombie-stat"><span class="zombie-stat-label">DANNI</span><span class="zombie-stat-value">${z.danni}</span></div>
-          <div class="zombie-stat"><span class="zombie-stat-label">RESISTENZA</span><span class="zombie-stat-value">${z.resistenza}</span></div>
-          <div class="zombie-stat"><span class="zombie-stat-label">ESPERIENZA</span><span class="zombie-stat-value">${z.esperienza}</span></div>
+          <div class="zombie-stat"><span class="zombie-stat-label">AZIONI</span><span class="zombie-stat-value">${fmtStat(z.azioni)}</span></div>
+          <div class="zombie-stat"><span class="zombie-stat-label">DANNI</span><span class="zombie-stat-value">${fmtStat(z.danni)}</span></div>
+          <div class="zombie-stat"><span class="zombie-stat-label">RESISTENZA</span><span class="zombie-stat-value">${fmtStat(z.resistenza)}</span></div>
+          <div class="zombie-stat"><span class="zombie-stat-label">ESPERIENZA</span><span class="zombie-stat-value">${fmtStat(z.esperienza)}</span></div>
         </div>
         ${specBtn}
       </div>
