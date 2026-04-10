@@ -464,154 +464,7 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
   </div>
 </div>
 
-<script src="data.js">
-// ===== ZOMBI DRAFT =====
-const ZD = {
-  extracted: { abomination: [], necromancer: [] },
-  freeType: null,
-  freeTempId: null,
-};
-
-function zdGetPool(tipo) {
-  return ZOMBIES.filter(z => z.tipo.toLowerCase() === tipo.toLowerCase());
-}
-function zdExtractedIds(tipo) {
-  return new Set(ZD.extracted[tipo.toLowerCase()].map(z => z.id));
-}
-function zdAvailable(tipo) {
-  const taken = zdExtractedIds(tipo);
-  return zdGetPool(tipo).filter(z => !taken.has(z.id));
-}
-
-function zdDraft(tipo) {
-  const avail = zdAvailable(tipo);
-  if (!avail.length) return;
-  const z = avail[Math.floor(Math.random() * avail.length)];
-  ZD.extracted[tipo.toLowerCase()].push({...z, _manual: false});
-  zdRenderList(tipo);
-  zdUpdateButtons(tipo);
-}
-
-function zdRenderList(tipo) {
-  const key = tipo.toLowerCase();
-  const list = document.getElementById('zd-list-' + key);
-  const items = ZD.extracted[key];
-  if (!items.length) {
-    list.innerHTML = '<div class="zd-empty">Nessun ' + (key==='abomination'?'Abominio':'Necromante') + ' estratto</div>';
-    return;
-  }
-  list.innerHTML = items.map((z,i) => `
-    <div class="zd-card-wrap">
-      <span class="zd-remove-btn" onclick="zdRemove('${key}',${i})">×</span>
-      ${zombieCardHtml(z)}
-    </div>`).join('');
-}
-
-function zdRemove(tipo, idx) {
-  ZD.extracted[tipo].splice(idx, 1);
-  zdRenderList(tipo);
-  zdUpdateButtons(tipo);
-}
-
-function zdUpdateButtons(tipo) {
-  const key = tipo.toLowerCase();
-  const avail = zdAvailable(tipo);
-  const btnDraft = document.getElementById('zd-btn-' + (key==='abomination'?'abom':'necro'));
-  const btnFree  = document.getElementById('zd-btn-' + (key==='abomination'?'abom':'necro') + '-free');
-  if (btnDraft) btnDraft.disabled = avail.length === 0;
-  if (btnFree)  btnFree.disabled  = avail.length === 0;
-}
-
-function zdOpenFree(tipo) {
-  ZD.freeType = tipo.toLowerCase();
-  ZD.freeTempId = null;
-  document.getElementById('zd-free-title').textContent =
-    tipo.toLowerCase() === 'abomination' ? 'Scelta Libera — Abomini' : 'Scelta Libera — Necromanti';
-  document.getElementById('zd-free-search').value = '';
-  document.getElementById('zd-btn-confirm-free').disabled = true;
-  zdRenderFreeGrid('');
-  showScreen('screen-zd-freepick');
-}
-
-function zdRenderFreeGrid(filter) {
-  const avail = zdAvailable(ZD.freeType).filter(z =>
-    z.name.toLowerCase().includes((filter||'').toLowerCase())
-  );
-  const grid = document.getElementById('zd-free-grid');
-  if (!avail.length) {
-    grid.innerHTML = '<div style="text-align:center;color:rgba(245,232,208,0.4);padding:20px;font-family:Cinzel,serif;font-size:12px">Nessuno disponibile</div>';
-    document.getElementById('zd-btn-confirm-free').disabled = true;
-    return;
-  }
-  grid.innerHTML = avail.map(z => {
-    const sel = ZD.freeTempId === z.id;
-    const tc = TIPO_COLORS[z.tipo] || {cls:'abomination'};
-    const specBtn = z.regole_speciali
-      ? `<button class="card-expand-btn" onclick="toggleZombieSpeciali(event,'zdsp-${z.id}')">▸ Regole Speciali</button>`
-      : '';
-    const specSection = z.regole_speciali
-      ? `<div class="zombie-speciali-expanded" id="zdsp-${z.id}"><div style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7">${z.regole_speciali}</div></div>`
-      : '';
-    const avatarHtml = z.avatar
-      ? `<img src="${z.avatar}" alt="${z.name}" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block" onclick="openZombieModal(event,'${z.id}')">`
-      : `<div class="zombie-avatar-placeholder"><div style="font-family:'Cinzel',serif;font-size:9px;color:rgba(245,232,208,0.4)">${z.tipo.toUpperCase()}</div></div>`;
-    return `<div style="margin-bottom:12px">
-      <div class="zombie-card${sel?' selected':''}" style="${sel?'border-color:var(--gold);box-shadow:0 0 20px rgba(201,168,76,0.3)':''}" onclick="zdSelectFree('${z.id}')">
-        ${sel?'<div style=\'position:absolute;top:8px;right:8px;width:24px;height:24px;background:var(--gold);color:#000;border-radius:50%;font-size:13px;font-weight:900;line-height:24px;text-align:center;z-index:2\'>✓</div>':''}
-        <div class="zombie-avatar-wrap">${avatarHtml}</div>
-        <div class="zombie-body">
-          <div style="display:flex;justify-content:space-between;align-items:baseline">
-            <div class="zombie-name">${z.name}</div>
-            <div class="card-number">#${z.id.replace(/[A-Z]+/g,'')}</div>
-          </div>
-          <div class="zombie-setname">${z.set}</div>
-          <div class="zombie-stats-grid" style="margin-top:4px">
-            <div class="zombie-stat"><span class="zombie-tipo-badge ${tc.cls}">${z.tipo}</span></div>
-            <div class="zombie-stat"><span class="zombie-stat-label">PRIORITÀ</span><span class="zombie-stat-value" style="color:var(--blood-light)">${z.priorita}</span></div>
-            <div class="zombie-stat"><span class="zombie-stat-label">AZIONI</span><span class="zombie-stat-value">${fmtStat(z.azioni)}</span></div>
-            <div class="zombie-stat"><span class="zombie-stat-label">DANNI</span><span class="zombie-stat-value">${fmtStat(z.danni)}</span></div>
-            <div class="zombie-stat"><span class="zombie-stat-label">RESISTENZA</span><span class="zombie-stat-value">${fmtStat(z.resistenza)}</span></div>
-            <div class="zombie-stat"><span class="zombie-stat-label">ESPERIENZA</span><span class="zombie-stat-value">${fmtStat(z.esperienza)}</span></div>
-          </div>
-          ${specBtn}
-        </div>
-      </div>${specSection}</div>`;
-  }).join('');
-}
-
-function zdSelectFree(id) {
-  ZD.freeTempId = ZD.freeTempId === id ? null : id;
-  zdRenderFreeGrid(document.getElementById('zd-free-search').value);
-  document.getElementById('zd-btn-confirm-free').disabled = !ZD.freeTempId;
-}
-function zdFilterFree(v) { zdRenderFreeGrid(v); }
-function zdCancelFree() { showScreen('screen-zombidraft'); }
-function zdConfirmFree() {
-  if (!ZD.freeTempId) return;
-  const z = ZOMBIES.find(x => x.id === ZD.freeTempId);
-  if (!z) return;
-  ZD.extracted[ZD.freeType].push({...z, _manual: true});
-  zdRenderList(ZD.freeType);
-  zdUpdateButtons(ZD.freeType);
-  showScreen('screen-zombidraft');
-}
-
-function zdReset() {
-  ZD.extracted = { abomination: [], necromancer: [] };
-  zdRenderList('abomination');
-  zdRenderList('necromancer');
-  zdUpdateButtons('abomination');
-  zdUpdateButtons('necromancer');
-}
-
-function zdInit() {
-  zdRenderList('abomination');
-  zdRenderList('necromancer');
-  zdUpdateButtons('abomination');
-  zdUpdateButtons('necromancer');
-}
-
-</script>
+<script src="data.js"></script>
 <script>
 function showScreen(id,pushState=true){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);if(id==='screen-capacita'){document.getElementById('capacita-search').value='';renderCapacita('');}
   if(id==='screen-bestiario'){document.getElementById('bestiary-search').value='';bestiary_setFilter=null;initBestiario();}
@@ -639,22 +492,22 @@ function totalSelected(){return S.selectedIds.length+(S.freePickSurvivor?1:0);}
 function renderDraftScreen(){document.getElementById('current-player-num').textContent=S.currentPlayerIndex+1;document.getElementById('round-display').textContent=S.currentPlayerIndex+1;document.getElementById('total-rounds').textContent=S.players;const rem=S.keep-totalSelected();document.getElementById('picks-info').textContent=rem>0?`Scegli ancora ${rem} Sopravvissut${rem>1?'i':'o'}`:'Selezione completata ✓';renderDraftGrid();document.getElementById('btn-confirm-picks').disabled=totalSelected()!==S.keep;}
 function renderDraftGrid(){let html=S.currentDraw.map(s=>survivorCardHtml(s,true)).join('');html+=S.freePickSurvivor?freePickFilledHtml(S.freePickSurvivor):freePickEmptyHtml();document.getElementById('draft-grid').innerHTML=html;}
 function freePickEmptyHtml(){return`<div class="free-pick-card" onclick="showFreePick()"><div class="free-pick-avatar-placeholder">?</div><div class="free-pick-body"><div class="free-pick-title">Scelta Libera</div><div class="free-pick-sub">Tocca per scegliere un Sopravvissuto dalla collezione</div></div></div>`;}
-function freePickFilledHtml(s){const col1=s.skills.slice(0,4),col2=s.skills.slice(4);return`<div class="free-pick-card filled" style="padding-bottom:20px"><img class="card-avatar" src="${s.avatar}" alt="${s.name}" onclick="openCardModal(event,'${s.id}')"><div class="card-body"><div><div class="card-top"><div><div class="card-name">${s.name}</div><div class="card-set">${s.set}</div></div><div class="card-number">#${s.id}</div></div><div class="skills-preview">${s.skills.map(sk=>`<div class="skill-dot ${sk.level}"></div>`).join('')}</div></div><div><button class="card-expand-btn" onclick="toggleSkills(event,'fp')">▸ Abilità</button><button class="change-btn" onclick="removeFreePickSurvivor(event)">✕ Annulla</button></div></div></div><div class="skills-expanded" id="skills-fp"><div class="skills-columns"><div>${col1.map(sk=>skillItemHtml(sk)).join('')}</div><div>${col2.map(sk=>skillItemHtml(sk)).join('')}</div></div></div>`;}
-function survivorCardHtml(s,selectable){const sel=S.selectedIds.includes(s.id);const col1=s.skills.slice(0,4),col2=s.skills.slice(4);const click=selectable?`toggleSelect('${s.id}')`:'';return`<div class="survivor-card ${sel?'selected':''}" id="card-${s.id}" onclick="${click}"><img class="card-avatar" src="${s.avatar}" alt="${s.name}" onclick="openCardModal(event,'${s.id}')"><div class="card-body"><div><div class="card-top"><div><div class="card-name">${s.name}</div><div class="card-set">${s.set}</div></div><div class="card-number">#${s.id}</div></div><div class="skills-preview">${s.skills.map(sk=>`<div class="skill-dot ${sk.level}"></div>`).join('')}</div></div><button class="card-expand-btn" onclick="toggleSkills(event,'${s.id}')">▸ Abilità</button></div></div><div class="skills-expanded" id="skills-${s.id}"><div class="skills-columns"><div>${col1.map(sk=>skillItemHtml(sk)).join('')}</div><div>${col2.map(sk=>skillItemHtml(sk)).join('')}</div></div></div>`;}
+function freePickFilledHtml(s){const col1=s.skills.slice(0,4),col2=s.skills.slice(4);return`<div class="free-pick-card filled" style="padding-bottom:20px"><img class="card-avatar" src="${s.avatar}" alt="${s.name}" onclick="openCardModal(event,'${s.id}')"><div class="card-body"><div><div class="card-top"><div><div class="card-name">${s.name}</div><div class="card-set">${s.set}${s.autore ? " · " + s.autore : ""}</div></div><div class="card-number">#${s.id}</div></div><div class="skills-preview">${s.skills.map(sk=>`<div class="skill-dot ${sk.level}"></div>`).join('')}</div></div><div><button class="card-expand-btn" onclick="toggleSkills(event,'fp')">▸ Abilità</button><button class="change-btn" onclick="removeFreePickSurvivor(event)">✕ Annulla</button></div></div></div><div class="skills-expanded" id="skills-fp"><div class="skills-columns"><div>${col1.map(sk=>skillItemHtml(sk)).join('')}</div><div>${col2.map(sk=>skillItemHtml(sk)).join('')}</div></div></div>`;}
+function survivorCardHtml(s,selectable){const sel=S.selectedIds.includes(s.id);const col1=s.skills.slice(0,4),col2=s.skills.slice(4);const click=selectable?`toggleSelect('${s.id}')`:'';return`<div class="survivor-card ${sel?'selected':''}" id="card-${s.id}" onclick="${click}"><img class="card-avatar" src="${s.avatar}" alt="${s.name}" onclick="openCardModal(event,'${s.id}')"><div class="card-body"><div><div class="card-top"><div><div class="card-name">${s.name}</div><div class="card-set">${s.set}${s.autore ? " · " + s.autore : ""}</div></div><div class="card-number">#${s.id}</div></div><div class="skills-preview">${s.skills.map(sk=>`<div class="skill-dot ${sk.level}"></div>`).join('')}</div></div><button class="card-expand-btn" onclick="toggleSkills(event,'${s.id}')">▸ Abilità</button></div></div><div class="skills-expanded" id="skills-${s.id}"><div class="skills-columns"><div>${col1.map(sk=>skillItemHtml(sk)).join('')}</div><div>${col2.map(sk=>skillItemHtml(sk)).join('')}</div></div></div>`;}
 function skillItemHtml(sk){const n=sk.name.replace(/'/g,"\'").replace(/"/g,'&quot;');return`<div class="skill-item" onclick="openSkillModal(event,'${n}','${sk.level}')"><div class="skill-flame ${sk.level}"></div><span class="skill-name">${sk.name}</span></div>`;}
 function toggleSelect(id){const i=S.selectedIds.indexOf(id);if(i>-1)S.selectedIds.splice(i,1);else if(totalSelected()<S.keep)S.selectedIds.push(id);renderDraftScreen();}
 function toggleSkills(e,id){e.stopPropagation();const el=document.getElementById('skills-'+id);if(!el)return;const open=el.classList.toggle('open');e.target.textContent=open?'▾ Abilità':'▸ Abilità';}
 function showFreePick(){S._tempFreePickId=null;S._fpSetFilter=null;document.getElementById('free-pick-search').value='';showScreen('screen-freepick');renderFpSetChips();renderFreePickGrid('');}
 function renderFpSetChips(){document.getElementById('fp-set-chips').innerHTML=S.activeSets.map(s=>`<div class="set-chip ${S._fpSetFilter===s?'active':''}" onclick="toggleFpSet('${encodeId(s)}')">${s}</div>`).join('');}
 function toggleFpSet(id){const name=S.availableSets.find(s=>encodeId(s)===id);S._fpSetFilter=S._fpSetFilter===name?null:name;renderFpSetChips();renderFreePickGrid(document.getElementById('free-pick-search').value);}
-function renderFreePickGrid(filter){const drawnIds=new Set(S.currentDraw.map(s=>s.id));const available=SURVIVORS.filter(s=>!S.takenIds.has(s.id)&&!drawnIds.has(s.id)&&S.activeSets.includes(s.set)&&(!S._fpSetFilter||s.set===S._fpSetFilter)&&s.name.toLowerCase().includes((filter||'').toLowerCase()));const grid=document.getElementById('freepick-grid');if(!available.length){grid.innerHTML='<div style="text-align:center;color:rgba(245,232,208,0.4);padding:20px;font-family:Cinzel,serif;font-size:12px">Nessun Sopravvissuto disponibile</div>';document.getElementById('btn-confirm-free').disabled=true;return;}grid.innerHTML=available.map(s=>{const sel=S._tempFreePickId===s.id;const col1=s.skills.slice(0,4),col2=s.skills.slice(4);return`<div class="survivor-card ${sel?'selected':''}" id="fp-${s.id}" onclick="selectTempFree('${s.id}')"><img class="card-avatar" src="${s.avatar}" alt="${s.name}" onclick="openCardModal(event,'${s.id}')"><div class="card-body"><div><div class="card-top"><div><div class="card-name">${s.name}</div><div class="card-set">${s.set}</div></div><div class="card-number">#${s.id}</div></div><div class="skills-preview">${s.skills.map(sk=>`<div class="skill-dot ${sk.level}"></div>`).join('')}</div></div><button class="card-expand-btn" onclick="toggleSkills(event,'fpl-${s.id}')">▸ Abilità</button></div></div><div class="skills-expanded" id="skills-fpl-${s.id}"><div class="skills-columns"><div>${col1.map(sk=>skillItemHtml(sk)).join('')}</div><div>${col2.map(sk=>skillItemHtml(sk)).join('')}</div></div></div>`;}).join('');document.getElementById('btn-confirm-free').disabled=!S._tempFreePickId;}
+function renderFreePickGrid(filter){const drawnIds=new Set(S.currentDraw.map(s=>s.id));const available=SURVIVORS.filter(s=>!S.takenIds.has(s.id)&&!drawnIds.has(s.id)&&S.activeSets.includes(s.set)&&(!S._fpSetFilter||s.set===S._fpSetFilter)&&s.name.toLowerCase().includes((filter||'').toLowerCase()));const grid=document.getElementById('freepick-grid');if(!available.length){grid.innerHTML='<div style="text-align:center;color:rgba(245,232,208,0.4);padding:20px;font-family:Cinzel,serif;font-size:12px">Nessun Sopravvissuto disponibile</div>';document.getElementById('btn-confirm-free').disabled=true;return;}grid.innerHTML=available.map(s=>{const sel=S._tempFreePickId===s.id;const col1=s.skills.slice(0,4),col2=s.skills.slice(4);return`<div class="survivor-card ${sel?'selected':''}" id="fp-${s.id}" onclick="selectTempFree('${s.id}')"><img class="card-avatar" src="${s.avatar}" alt="${s.name}" onclick="openCardModal(event,'${s.id}')"><div class="card-body"><div><div class="card-top"><div><div class="card-name">${s.name}</div><div class="card-set">${s.set}${s.autore ? " · " + s.autore : ""}</div></div><div class="card-number">#${s.id}</div></div><div class="skills-preview">${s.skills.map(sk=>`<div class="skill-dot ${sk.level}"></div>`).join('')}</div></div><button class="card-expand-btn" onclick="toggleSkills(event,'fpl-${s.id}')">▸ Abilità</button></div></div><div class="skills-expanded" id="skills-fpl-${s.id}"><div class="skills-columns"><div>${col1.map(sk=>skillItemHtml(sk)).join('')}</div><div>${col2.map(sk=>skillItemHtml(sk)).join('')}</div></div></div>`;}).join('');document.getElementById('btn-confirm-free').disabled=!S._tempFreePickId;}
 function selectTempFree(id){S._tempFreePickId=S._tempFreePickId===id?null:id;document.querySelectorAll('[id^="fp-"]').forEach(el=>{if(el.classList.contains('survivor-card'))el.className='survivor-card'+(S._tempFreePickId===el.id.replace('fp-','')?' selected':'');});document.getElementById('btn-confirm-free').disabled=!S._tempFreePickId;}
 function filterFreePick(val){renderFreePickGrid(val);}
 function confirmFreePick(){if(!S._tempFreePickId)return;S.freePickSurvivor=SURVIVORS.find(s=>s.id===S._tempFreePickId);showScreen('screen-draft');renderDraftScreen();}
 function cancelFreePick(){showScreen('screen-draft');}
 function removeFreePickSurvivor(e){e.stopPropagation();S.freePickSurvivor=null;renderDraftScreen();}
 function confirmPicks(){if(totalSelected()!==S.keep)return;const chosen=S.selectedIds.map(id=>SURVIVORS.find(s=>s.id===id));if(S.freePickSurvivor)chosen.push(S.freePickSurvivor);chosen.forEach(s=>S.takenIds.add(s.id));S.playerResults[S.currentPlayerIndex]=chosen;S.currentPlayerIndex++;if(S.currentPlayerIndex>=S.players)showSummary();else dealToCurrentPlayer();}
-function showSummary(){showScreen('screen-summary');document.getElementById('summary-content').innerHTML=S.playerResults.map((survivors,i)=>`<div class="player-summary"><div class="player-summary-title">GIOCATORE ${i+1}</div><div class="summary-survivors">${survivors.map(s=>`<div class="summary-card"><img class="summary-avatar" src="${s.avatar}" alt="${s.name}" onclick="openCardModal(event,'${s.id}')"><div class="summary-name">${s.name}</div><div class="summary-number">#${s.id}</div><div class="summary-set">${s.set}</div></div>`).join('')}</div></div>`).join('');}
+function showSummary(){showScreen('screen-summary');document.getElementById('summary-content').innerHTML=S.playerResults.map((survivors,i)=>`<div class="player-summary"><div class="player-summary-title">GIOCATORE ${i+1}</div><div class="summary-survivors">${survivors.map(s=>`<div class="summary-card"><img class="summary-avatar" src="${s.avatar}" alt="${s.name}" onclick="openCardModal(event,'${s.id}')"><div class="summary-name">${s.name}</div><div class="summary-number">#${s.id}</div><div class="summary-set">${s.set}${s.autore ? " · " + s.autore : ""}</div></div>`).join('')}</div></div>`).join('');}
 function restartDraft(){S.currentPlayerIndex=0;S.takenIds=new Set();S.playerResults=[];showScreen('screen-setup');}
 
 
@@ -835,6 +688,151 @@ function toggleAccordion(id) {
 
 initSets();
 initBestiario();
+// ===== ZOMBI DRAFT =====
+const ZD = {
+  extracted: { abomination: [], necromancer: [] },
+  freeType: null,
+  freeTempId: null,
+};
+
+function zdGetPool(tipo) {
+  return ZOMBIES.filter(z => z.tipo.toLowerCase() === tipo.toLowerCase());
+}
+function zdExtractedIds(tipo) {
+  return new Set(ZD.extracted[tipo.toLowerCase()].map(z => z.id));
+}
+function zdAvailable(tipo) {
+  const taken = zdExtractedIds(tipo);
+  return zdGetPool(tipo).filter(z => !taken.has(z.id));
+}
+
+function zdDraft(tipo) {
+  const avail = zdAvailable(tipo);
+  if (!avail.length) return;
+  const z = avail[Math.floor(Math.random() * avail.length)];
+  ZD.extracted[tipo.toLowerCase()].push({...z, _manual: false});
+  zdRenderList(tipo);
+  zdUpdateButtons(tipo);
+}
+
+function zdRenderList(tipo) {
+  const key = tipo.toLowerCase();
+  const list = document.getElementById('zd-list-' + key);
+  const items = ZD.extracted[key];
+  if (!items.length) {
+    list.innerHTML = '<div class="zd-empty">Nessun ' + (key==='abomination'?'Abominio':'Necromante') + ' estratto</div>';
+    return;
+  }
+  list.innerHTML = items.map((z,i) => `
+    <div class="zd-card-wrap">
+      <span class="zd-remove-btn" onclick="zdRemove('${key}',${i})">×</span>
+      ${zombieCardHtml(z)}
+    </div>`).join('');
+}
+
+function zdRemove(tipo, idx) {
+  ZD.extracted[tipo].splice(idx, 1);
+  zdRenderList(tipo);
+  zdUpdateButtons(tipo);
+}
+
+function zdUpdateButtons(tipo) {
+  const key = tipo.toLowerCase();
+  const avail = zdAvailable(tipo);
+  const btnDraft = document.getElementById('zd-btn-' + (key==='abomination'?'abom':'necro'));
+  const btnFree  = document.getElementById('zd-btn-' + (key==='abomination'?'abom':'necro') + '-free');
+  if (btnDraft) btnDraft.disabled = avail.length === 0;
+  if (btnFree)  btnFree.disabled  = avail.length === 0;
+}
+
+function zdOpenFree(tipo) {
+  ZD.freeType = tipo.toLowerCase();
+  ZD.freeTempId = null;
+  document.getElementById('zd-free-title').textContent =
+    tipo.toLowerCase() === 'abomination' ? 'Scelta Libera — Abomini' : 'Scelta Libera — Necromanti';
+  document.getElementById('zd-free-search').value = '';
+  document.getElementById('zd-btn-confirm-free').disabled = true;
+  zdRenderFreeGrid('');
+  showScreen('screen-zd-freepick');
+}
+
+function zdRenderFreeGrid(filter) {
+  const avail = zdAvailable(ZD.freeType).filter(z =>
+    z.name.toLowerCase().includes((filter||'').toLowerCase())
+  );
+  const grid = document.getElementById('zd-free-grid');
+  if (!avail.length) {
+    grid.innerHTML = '<div style="text-align:center;color:rgba(245,232,208,0.4);padding:20px;font-family:Cinzel,serif;font-size:12px">Nessuno disponibile</div>';
+    document.getElementById('zd-btn-confirm-free').disabled = true;
+    return;
+  }
+  grid.innerHTML = avail.map(z => {
+    const sel = ZD.freeTempId === z.id;
+    const tc = TIPO_COLORS[z.tipo] || {cls:'abomination'};
+    const specBtn = z.regole_speciali
+      ? `<button class="card-expand-btn" onclick="toggleZombieSpeciali(event,'zdsp-${z.id}')">▸ Regole Speciali</button>`
+      : '';
+    const specSection = z.regole_speciali
+      ? `<div class="zombie-speciali-expanded" id="zdsp-${z.id}"><div style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7">${z.regole_speciali}</div></div>`
+      : '';
+    const avatarHtml = z.avatar
+      ? `<img src="${z.avatar}" alt="${z.name}" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block" onclick="openZombieModal(event,'${z.id}')">`
+      : `<div class="zombie-avatar-placeholder"><div style="font-family:'Cinzel',serif;font-size:9px;color:rgba(245,232,208,0.4)">${z.tipo.toUpperCase()}</div></div>`;
+    return `<div style="margin-bottom:12px">
+      <div class="zombie-card${sel?' selected':''}" style="${sel?'border-color:var(--gold);box-shadow:0 0 20px rgba(201,168,76,0.3)':''}" onclick="zdSelectFree('${z.id}')">
+        ${sel?'<div style=\'position:absolute;top:8px;right:8px;width:24px;height:24px;background:var(--gold);color:#000;border-radius:50%;font-size:13px;font-weight:900;line-height:24px;text-align:center;z-index:2\'>✓</div>':''}
+        <div class="zombie-avatar-wrap">${avatarHtml}</div>
+        <div class="zombie-body">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div class="zombie-name">${z.name}</div>
+            <div class="card-number">#${z.id.replace(/[A-Z]+/g,'')}</div>
+          </div>
+          <div class="zombie-setname">${z.set}</div>
+          <div class="zombie-stats-grid" style="margin-top:4px">
+            <div class="zombie-stat"><span class="zombie-tipo-badge ${tc.cls}">${z.tipo}</span></div>
+            <div class="zombie-stat"><span class="zombie-stat-label">PRIORITÀ</span><span class="zombie-stat-value" style="color:var(--blood-light)">${z.priorita}</span></div>
+            <div class="zombie-stat"><span class="zombie-stat-label">AZIONI</span><span class="zombie-stat-value">${fmtStat(z.azioni)}</span></div>
+            <div class="zombie-stat"><span class="zombie-stat-label">DANNI</span><span class="zombie-stat-value">${fmtStat(z.danni)}</span></div>
+            <div class="zombie-stat"><span class="zombie-stat-label">RESISTENZA</span><span class="zombie-stat-value">${fmtStat(z.resistenza)}</span></div>
+            <div class="zombie-stat"><span class="zombie-stat-label">ESPERIENZA</span><span class="zombie-stat-value">${fmtStat(z.esperienza)}</span></div>
+          </div>
+          ${specBtn}
+        </div>
+      </div>${specSection}</div>`;
+  }).join('');
+}
+
+function zdSelectFree(id) {
+  ZD.freeTempId = ZD.freeTempId === id ? null : id;
+  zdRenderFreeGrid(document.getElementById('zd-free-search').value);
+  document.getElementById('zd-btn-confirm-free').disabled = !ZD.freeTempId;
+}
+function zdFilterFree(v) { zdRenderFreeGrid(v); }
+function zdCancelFree() { showScreen('screen-zombidraft'); }
+function zdConfirmFree() {
+  if (!ZD.freeTempId) return;
+  const z = ZOMBIES.find(x => x.id === ZD.freeTempId);
+  if (!z) return;
+  ZD.extracted[ZD.freeType].push({...z, _manual: true});
+  zdRenderList(ZD.freeType);
+  zdUpdateButtons(ZD.freeType);
+  showScreen('screen-zombidraft');
+}
+
+function zdReset() {
+  ZD.extracted = { abomination: [], necromancer: [] };
+  zdRenderList('abomination');
+  zdRenderList('necromancer');
+  zdUpdateButtons('abomination');
+  zdUpdateButtons('necromancer');
+}
+
+function zdInit() {
+  zdRenderList('abomination');
+  zdRenderList('necromancer');
+  zdUpdateButtons('abomination');
+  zdUpdateButtons('necromancer');
+}
 zdInit();
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
