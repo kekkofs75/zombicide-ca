@@ -482,7 +482,14 @@ function toggleCapacita(sid){const body=document.getElementById('cap-'+sid);cons
 
 const S={players:3,draw:3,keep:2,activeSets:[],availableSets:[],pool:[],takenIds:new Set(),currentPlayerIndex:0,currentDraw:[],selectedIds:[],freePickSurvivor:null,playerResults:[],_tempFreePickId:null,_fpSetFilter:null};
 function encodeId(s){return s.replace(/[^a-zA-Z0-9]/g,'_');}
-function initSets(){const sets=[...new Set(SURVIVORS.map(s=>s.set))];S.availableSets=sets;S.activeSets=[...sets];document.getElementById('sets-grid').innerHTML=sets.map(s=>`<div class="set-chip active" id="set-${encodeId(s)}" onclick="toggleSet('${encodeId(s)}')">${s}</div>`).join('');}
+function initSets(){
+  const sets=[...new Set(SURVIVORS.map(s=>s.set))];
+  S.availableSets=sets;S.activeSets=[...sets];
+  // Build display labels (show autore for Special Guest)
+  const setLabels = {};
+  sets.forEach(set => { setLabels[set] = set; });
+  document.getElementById('sets-grid').innerHTML=sets.map(s=>`<div class="set-chip active" id="set-${encodeId(s)}" onclick="toggleSet('${encodeId(s)}')">${s}</div>`).join('');
+}
 function toggleSet(id){const name=S.availableSets.find(s=>encodeId(s)===id);if(!name)return;const i=S.activeSets.indexOf(name);if(i>-1){if(S.activeSets.length>1)S.activeSets.splice(i,1);}else S.activeSets.push(name);S.availableSets.forEach(s=>{const el=document.getElementById('set-'+encodeId(s));if(el)el.className='set-chip'+(S.activeSets.includes(s)?' active':'');});}
 function adjust(key,delta){const limits={players:[2,6],draw:[1,6],keep:[1,5]};const[mn,mx]=limits[key];S[key]=Math.max(mn,Math.min(mx,S[key]+delta));if(key==='draw'&&S.keep>S.draw){S.keep=S.draw;document.getElementById('display-keep').textContent=S.keep;}if(key==='keep'&&S.keep>S.draw){S.keep=S.draw;}document.getElementById('display-'+key).textContent=S[key];}
 function startDraft(){S.pool=SURVIVORS.filter(s=>S.activeSets.includes(s.set));if(S.pool.length<S.players*S.keep){alert('Non ci sono abbastanza Sopravvissuti nel pool!');return;}S.takenIds=new Set();S.currentPlayerIndex=0;S.playerResults=Array.from({length:S.players},()=>[]);showScreen('screen-draft');dealToCurrentPlayer();}
@@ -615,22 +622,39 @@ function renderBestiario(filter) {
   }
 }
 
+
+function formatZombieRules(text, zombieId) {
+  if (!text) return '';
+  return text.replace('NECROMANCER_LINK', 
+    `<span class="zombie-tipo-badge necromancer" style="cursor:pointer;text-decoration:none" onclick="openNecroRulesPopup(event)">${'Necromancer'}</span>`
+  );
+}
+
+function openNecroRulesPopup(e) {
+  e.stopPropagation();
+  const necro = ZOMBIES.find(z => z.id === 'ZN001');
+  if (!necro) return;
+  document.getElementById('necro-rules-text').textContent = necro.regole_speciali;
+  document.getElementById('necro-rules-modal').classList.add('open');
+}
+
 function fmtStat(v) {
   const s = String(v);
   if (s.endsWith('*')) return s.slice(0,-1) + '<span class="stat-asterisk">*</span>';
   return s;
 }
 
-function zombieCardHtml(z) {
+function zombieCardHtml(z) { return zombieCardHtmlCtx(z, z.id); }
+function zombieCardHtmlCtx(z, ctxId) {
   const tc = TIPO_COLORS[z.tipo] || {cls:'walker'};
   const avatarHtml = z.avatar
-    ? `<img src="${z.avatar}" alt="${z.name}" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block" onclick="openZombieModal(event,'${z.id}')">`
+    ? `<img src="${z.avatar}" alt="${z.name}" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block" onclick="openZombieModal(event,'${z.id}')" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block">`
     : `<div class="zombie-avatar-placeholder" onclick="openZombieModal(event,'${z.id}')"><div style="font-family:'Cinzel',serif;font-size:9px;color:rgba(245,232,208,0.4);letter-spacing:1px">${z.tipo.toUpperCase()}</div></div>`;
   const specBtn = z.regole_speciali
-    ? `<button class="card-expand-btn" onclick="toggleZombieSpeciali(event,'zsp-${z.id}')">▸ Regole Speciali</button>`
+    ? `<button class="card-expand-btn" onclick="toggleZombieSpeciali(event,'zsp-${ctxId}')">▸ Regole Speciali</button>`
     : '';
   const specSection = z.regole_speciali
-    ? `<div class="zombie-speciali-expanded" id="zsp-${z.id}"><div style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7">${z.regole_speciali}</div></div>`
+    ? `<div class="zombie-speciali-expanded" id="zsp-${ctxId}"><div style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7">${z.regole_speciali}</div></div>`
     : '';
   return `<div style="margin-bottom:12px">
     <div class="zombie-card">
@@ -723,11 +747,13 @@ function zdRenderList(tipo) {
     list.innerHTML = '<div class="zd-empty">Nessun ' + (key==='abomination'?'Abominio':'Necromante') + ' estratto</div>';
     return;
   }
-  list.innerHTML = items.map((z,i) => `
-    <div class="zd-card-wrap">
-      <span class="zd-remove-btn" onclick="zdRemove('${key}',${i})">×</span>
-      ${zombieCardHtml(z)}
-    </div>`).join('');
+  list.innerHTML = items.map((z,i) => {
+    const cardHtml = zombieCardHtmlCtx(z, `zdl_${key}_${i}`);
+    return `<div class="zd-card-wrap">
+      <button class="change-btn" style="margin:6px 12px 0" onclick="zdRemove('${key}',${i})">✕ Annulla</button>
+      ${cardHtml}
+    </div>`;
+  }).join('');
 }
 
 function zdRemove(tipo, idx) {
@@ -776,7 +802,7 @@ function zdRenderFreeGrid(filter) {
       ? `<div class="zombie-speciali-expanded" id="zdsp-${z.id}"><div style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7">${z.regole_speciali}</div></div>`
       : '';
     const avatarHtml = z.avatar
-      ? `<img src="${z.avatar}" alt="${z.name}" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block" onclick="openZombieModal(event,'${z.id}')">`
+      ? `<img src="${z.avatar}" alt="${z.name}" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block" onclick="openZombieModal(event,'${z.id}')" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block">`
       : `<div class="zombie-avatar-placeholder"><div style="font-family:'Cinzel',serif;font-size:9px;color:rgba(245,232,208,0.4)">${z.tipo.toUpperCase()}</div></div>`;
     return `<div style="margin-bottom:12px">
       <div class="zombie-card${sel?' selected':''}" style="${sel?'border-color:var(--gold);box-shadow:0 0 20px rgba(201,168,76,0.3)':''}" onclick="zdSelectFree('${z.id}')">
@@ -846,6 +872,20 @@ if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
     <div style="margin-top:8px;text-align:center">
       <img id="zombie-modal-img" src="" alt="" style="max-width:100%;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.6)">
     </div>
+  </div>
+</div>
+
+
+<!-- MODAL Necromancer rules reference -->
+<div class="modal-overlay" id="necro-rules-modal" onclick="if(event.target.id==='necro-rules-modal')document.getElementById('necro-rules-modal').classList.remove('open')">
+  <div class="modal-sheet" style="padding:16px 16px 36px">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="document.getElementById('necro-rules-modal').classList.remove('open')">×</button>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <span class="zombie-tipo-badge necromancer">Necromancer</span>
+      <span style="font-family:'Cinzel',serif;font-size:11px;color:rgba(245,232,208,0.5)">Regole base</span>
+    </div>
+    <div id="necro-rules-text" style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7"></div>
   </div>
 </div>
 
