@@ -520,7 +520,6 @@ function restartDraft(){S.currentPlayerIndex=0;S.takenIds=new Set();S.playerResu
 
 // ===== BESTIARY =====
 const TIPO_COLORS = {
-  'Ratz':        {cls:'ratz',        order:1},
   'Walker':      {cls:'walker',      order:2},
   'Fatty':       {cls:'fatty',       order:3},
   'Abomination': {cls:'abomination', order:3},
@@ -623,10 +622,11 @@ function renderBestiario(filter) {
 }
 
 
-function formatZombieRules(text, zombieId) {
+function formatZombieRules(text) {
   if (!text) return '';
-  return text.replace('NECROMANCER_LINK', 
-    `<span class="zombie-tipo-badge necromancer" style="cursor:pointer;text-decoration:none" onclick="openNecroRulesPopup(event)">${'Necromancer'}</span>`
+  return text.replace(
+    /Utilizza le regole del (Necromancer)\./g,
+    'Utilizza le regole del <span class="zombie-tipo-badge necromancer" style="cursor:pointer" onclick="openNecroRulesPopup(event)">$1</span>.'
   );
 }
 
@@ -645,16 +645,17 @@ function fmtStat(v) {
 }
 
 function zombieCardHtml(z) { return zombieCardHtmlCtx(z, z.id); }
-function zombieCardHtmlCtx(z, ctxId) {
+function zombieCardHtmlCtx(z, ctxId, actionsHtml='') {
   const tc = TIPO_COLORS[z.tipo] || {cls:'walker'};
+  const setLabel = z.set + (z.autore ? ' · ' + z.autore : '');
   const avatarHtml = z.avatar
-    ? `<img src="${z.avatar}" alt="${z.name}" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block" onclick="openZombieModal(event,'${z.id}')" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block">`
+    ? `<img src="${z.avatar}" alt="${z.name}" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block" onclick="openZombieModal(event,'${z.id}')">`
     : `<div class="zombie-avatar-placeholder" onclick="openZombieModal(event,'${z.id}')"><div style="font-family:'Cinzel',serif;font-size:9px;color:rgba(245,232,208,0.4);letter-spacing:1px">${z.tipo.toUpperCase()}</div></div>`;
   const specBtn = z.regole_speciali
     ? `<button class="card-expand-btn" onclick="toggleZombieSpeciali(event,'zsp-${ctxId}')">▸ Regole Speciali</button>`
     : '';
   const specSection = z.regole_speciali
-    ? `<div class="zombie-speciali-expanded" id="zsp-${ctxId}"><div style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7">${z.regole_speciali}</div></div>`
+    ? `<div class="zombie-speciali-expanded" id="zsp-${ctxId}"><div style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7">${formatZombieRules(z.regole_speciali)}</div></div>`
     : '';
   return `<div style="margin-bottom:12px">
     <div class="zombie-card">
@@ -664,7 +665,7 @@ function zombieCardHtmlCtx(z, ctxId) {
           <div class="zombie-name">${z.name}</div>
           <div class="card-number">#${z.id.replace(/[A-Z]+/g,'')}</div>
         </div>
-        <div class="zombie-setname">${z.set}</div>
+        <div class="zombie-setname">${setLabel}</div>
         <div class="zombie-stats-grid" style="margin-top:4px">
           <div class="zombie-stat"><span class="zombie-tipo-badge ${tc.cls}">${z.tipo}</span></div>
           <div class="zombie-stat"><span class="zombie-stat-label">PRIORITÀ</span><span class="zombie-stat-value" style="color:var(--blood-light)">${z.priorita}</span></div>
@@ -674,6 +675,7 @@ function zombieCardHtmlCtx(z, ctxId) {
           <div class="zombie-stat"><span class="zombie-stat-label">ESPERIENZA</span><span class="zombie-stat-value">${fmtStat(z.esperienza)}</span></div>
         </div>
         ${specBtn}
+        ${actionsHtml}
       </div>
     </div>${specSection}</div>`;
 }
@@ -748,11 +750,8 @@ function zdRenderList(tipo) {
     return;
   }
   list.innerHTML = items.map((z,i) => {
-    const cardHtml = zombieCardHtmlCtx(z, `zdl_${key}_${i}`);
-    return `<div class="zd-card-wrap">
-      <button class="change-btn" style="margin:6px 12px 0" onclick="zdRemove('${key}',${i})">✕ Annulla</button>
-      ${cardHtml}
-    </div>`;
+    const annullaBtn = `<button class="change-btn" style="margin-top:8px" onclick="zdRemove('${key}',${i})">✕ Annulla</button>`;
+    return zombieCardHtmlCtx(z, `zdl_${key}_${i}`, annullaBtn);
   }).join('');
 }
 
@@ -799,7 +798,7 @@ function zdRenderFreeGrid(filter) {
       ? `<button class="card-expand-btn" onclick="toggleZombieSpeciali(event,'zdsp-${z.id}')">▸ Regole Speciali</button>`
       : '';
     const specSection = z.regole_speciali
-      ? `<div class="zombie-speciali-expanded" id="zdsp-${z.id}"><div style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7">${z.regole_speciali}</div></div>`
+      ? `<div class="zombie-speciali-expanded" id="zdsp-${z.id}"><div style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7">${formatZombieRules(z.regole_speciali)}</div></div>`
       : '';
     const avatarHtml = z.avatar
       ? `<img src="${z.avatar}" alt="${z.name}" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block" onclick="openZombieModal(event,'${z.id}')" style="width:90px;height:120px;object-fit:cover;object-position:top center;display:block">`
@@ -813,7 +812,7 @@ function zdRenderFreeGrid(filter) {
             <div class="zombie-name">${z.name}</div>
             <div class="card-number">#${z.id.replace(/[A-Z]+/g,'')}</div>
           </div>
-          <div class="zombie-setname">${z.set}</div>
+          <div class="zombie-setname">${z.set}${z.autore ? ' · ' + z.autore : ''}</div>
           <div class="zombie-stats-grid" style="margin-top:4px">
             <div class="zombie-stat"><span class="zombie-tipo-badge ${tc.cls}">${z.tipo}</span></div>
             <div class="zombie-stat"><span class="zombie-stat-label">PRIORITÀ</span><span class="zombie-stat-value" style="color:var(--blood-light)">${z.priorita}</span></div>
