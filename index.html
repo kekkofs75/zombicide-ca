@@ -233,6 +233,18 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
       <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="10" cy="14" r="5" fill="#c9a84c" opacity="0.7"/><path d="M3 38 Q3 28 10 28 Q17 28 17 38" fill="#c9a84c" opacity="0.7"/><circle cx="34" cy="14" r="5" fill="#c9a84c" opacity="0.7"/><path d="M27 38 Q27 28 34 28 Q41 28 41 38" fill="#c9a84c" opacity="0.7"/><circle cx="22" cy="11" r="6" fill="#f0d080"/><path d="M13 38 Q13 26 22 26 Q31 26 31 38" fill="#f0d080"/></svg>
       <div class="home-btn-text"><div class="home-btn-title">Survivor Draft</div><div class="home-btn-desc">Pesca casuale dei Sopravvissuti per la tua partita</div></div>
     </button>
+    <button class="home-btn" onclick="showScreen('screen-zombidraft')">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="16" r="8" fill="#c9a84c" opacity="0.6"/><path d="M22 8 L26 14 L32 15 L28 20 L29 26 L22 23 L15 26 L16 20 L12 15 L18 14 Z" fill="#8b0000" opacity="0.8"/><rect x="10" y="30" width="24" height="3" rx="1.5" fill="#c9a84c" opacity="0.4"/><rect x="14" y="35" width="16" height="3" rx="1.5" fill="#c9a84c" opacity="0.3"/></svg>
+      <div class="home-btn-text"><div class="home-btn-title">Zombi Draft</div><div class="home-btn-desc">Estrai Abomini e Necromanti per la partita</div></div>
+    </button>
+    <button class="home-btn" onclick="showScreen('screen-sopravvissuti')">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="12" r="7" fill="#f0d080"/><path d="M8 40 Q8 26 22 26 Q36 26 36 40" fill="#f0d080"/><rect x="18" y="20" width="8" height="14" rx="2" fill="#c9a84c" opacity="0.5"/><polygon points="14,18 22,6 30,18" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity="0.6"/></svg>
+      <div class="home-btn-text"><div class="home-btn-title">Sopravvissuti</div><div class="home-btn-desc">Elenco completo dei Sopravvissuti e delle loro abilità</div></div>
+    </button>
+    <button class="home-btn" onclick="showScreen('screen-bestiario')">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="12" y="10" width="20" height="22" rx="6" fill="#c9a84c" opacity="0.7"/><line x1="16" y1="17" x2="20" y2="21" stroke="#080003" stroke-width="2" stroke-linecap="round"/><line x1="20" y1="17" x2="16" y2="21" stroke="#080003" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="19" r="3" fill="#080003"/><rect x="15" y="26" width="14" height="4" rx="1" fill="#080003"/><rect x="17" y="26" width="3" height="4" fill="#c9a84c" opacity="0.7"/><rect x="22" y="26" width="3" height="4" fill="#c9a84c" opacity="0.7"/><rect x="19" y="32" width="6" height="5" rx="2" fill="#c9a84c" opacity="0.5"/></svg>
+      <div class="home-btn-text"><div class="home-btn-title">Bestiario</div><div class="home-btn-desc">Zombie, Abomini, Necromanti e le loro caratteristiche</div></div>
+    </button>
     <button class="home-btn" onclick="showScreen('screen-capacita')">
       <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M22 6 C16 14 12 19 14 26 C15 31 18 35 22 36 C26 35 29 31 30 26 C32 19 28 14 22 6Z" fill="#c9a84c" opacity="0.7"/><path d="M22 12 C18 18 16 22 17 27 C18 31 20 34 22 34 C24 34 26 31 27 27 C28 22 26 18 22 12Z" fill="#f0d080"/><path d="M22 18 C20 22 19 25 20 28 C21 31 22 32 22 32 C22 32 23 31 24 28 C25 25 24 22 22 18Z" fill="white" opacity="0.7"/></svg>
       <div class="home-btn-text"><div class="home-btn-title">Capacità</div><div class="home-btn-desc">Cerca e consulta tutte le descrizioni delle abilità</div></div>
@@ -244,14 +256,6 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
     <button class="home-btn" onclick="showScreen('screen-regole')">
       <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="8" y="6" width="14" height="32" rx="2" fill="#c9a84c" opacity="0.6"/><rect x="22" y="6" width="14" height="32" rx="2" fill="#f0d080" opacity="0.8"/><rect x="20" y="6" width="4" height="32" fill="#8b0000" opacity="0.8"/><line x1="25" y1="14" x2="33" y2="14" stroke="#1a0008" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/><line x1="25" y1="19" x2="33" y2="19" stroke="#1a0008" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/><line x1="25" y1="24" x2="33" y2="24" stroke="#1a0008" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/><line x1="25" y1="29" x2="30" y2="29" stroke="#1a0008" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/></svg>
       <div class="home-btn-text"><div class="home-btn-title">Regole Rapide</div><div class="home-btn-desc">Consulta le regole durante la partita</div></div>
-    </button>
-    <button class="home-btn" onclick="showScreen('screen-bestiario')">
-      <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect x="12" y="10" width="20" height="22" rx="6" fill="#c9a84c" opacity="0.7"/><line x1="16" y1="17" x2="20" y2="21" stroke="#080003" stroke-width="2" stroke-linecap="round"/><line x1="20" y1="17" x2="16" y2="21" stroke="#080003" stroke-width="2" stroke-linecap="round"/><circle cx="28" cy="19" r="3" fill="#080003"/><rect x="15" y="26" width="14" height="4" rx="1" fill="#080003"/><rect x="17" y="26" width="3" height="4" fill="#c9a84c" opacity="0.7"/><rect x="22" y="26" width="3" height="4" fill="#c9a84c" opacity="0.7"/><rect x="19" y="32" width="6" height="5" rx="2" fill="#c9a84c" opacity="0.5"/></svg>
-      <div class="home-btn-text"><div class="home-btn-title">Bestiario</div><div class="home-btn-desc">Zombie, Abomini, Necromanti e le loro caratteristiche</div></div>
-    </button>
-    <button class="home-btn" onclick="showScreen('screen-zombidraft')">
-      <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="16" r="8" fill="#c9a84c" opacity="0.6"/><path d="M22 8 L26 14 L32 15 L28 20 L29 26 L22 23 L15 26 L16 20 L12 15 L18 14 Z" fill="#8b0000" opacity="0.8"/><rect x="10" y="30" width="24" height="3" rx="1.5" fill="#c9a84c" opacity="0.4"/><rect x="14" y="35" width="16" height="3" rx="1.5" fill="#c9a84c" opacity="0.3"/></svg>
-      <div class="home-btn-text"><div class="home-btn-title">Zombi Draft</div><div class="home-btn-desc">Estrai Abomini e Necromanti per la partita</div></div>
     </button>
   </div>
 </div>
@@ -294,6 +298,16 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
   <div id="summary-content"></div>
   <button class="btn-primary" onclick="restartDraft()" style="margin-top:20px">⚔ NUOVA PARTITA</button>
   <button class="btn-secondary" onclick="showScreen('screen-home')">← HOME</button>
+</div>
+
+<!-- SOPRAVVISSUTI -->
+<div class="screen" id="screen-sopravvissuti">
+  <button class="back-btn" onclick="showScreen('screen-home')">← HOME</button>
+  <div class="section-title">Sopravvissuti</div>
+  <div id="surv-set-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;"></div>
+  <input class="search-bar" type="text" placeholder="Cerca un sopravvissuto..." oninput="renderSopravvissuti(this.value)" id="surv-search">
+  <div id="surv-sort-btns" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
+  <div id="surv-list" style="margin-bottom:20px"></div>
 </div>
 
 <!-- CAPACITÀ -->
@@ -468,6 +482,7 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 <script>
 function showScreen(id,pushState=true){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);if(id==='screen-capacita'){document.getElementById('capacita-search').value='';renderCapacita('');}
   if(id==='screen-bestiario'){document.getElementById('bestiary-search').value='';bestiary_setFilter=null;initBestiario();}
+  if(id==='screen-sopravvissuti'){document.getElementById('surv-search').value='';surv_setFilter=null;initSopravvissuti();}
   if(id==='screen-zombidraft'){zdInit();}if(pushState)history.pushState({screen:id},'','');}
 window.addEventListener('popstate',e=>{const cur=document.querySelector('.screen.active');if(!cur)return;if(cur.id==='screen-home'){history.pushState({screen:'screen-home'},'','');return;}if(cur.id==='screen-freepick'){showScreen('screen-draft',false);return;}showScreen('screen-home',false);});
 history.pushState({screen:'screen-home'},'','');
@@ -709,6 +724,66 @@ function toggleAccordion(id) {
   if (!body) return;
   const open = body.classList.toggle('open');
   if (arr) arr.textContent = open ? '▾' : '▸';
+}
+
+
+// ===== SOPRAVVISSUTI =====
+let surv_sort = 'set';
+let surv_setFilter = null;
+
+function initSopravvissuti() {
+  const sets = [...new Set(SURVIVORS.map(s => s.set))];
+  document.getElementById('surv-set-chips').innerHTML = sets.map(s =>
+    `<div class="set-chip ${surv_setFilter===s?'active':''}" onclick="toggleSurvSet('${s.replace(/'/g,"\\'")}')">${s}</div>`
+  ).join('');
+  const sorts = [{k:'set',label:'Set'},{k:'nome',label:'A-Z'}];
+  document.getElementById('surv-sort-btns').innerHTML = sorts.map(s =>
+    `<div class="set-chip ${surv_sort===s.k?'active':''}" style="font-size:10px;padding:6px 12px" onclick="setSurvSort('${s.k}')">${s.label}</div>`
+  ).join('');
+  renderSopravvissuti(document.getElementById('surv-search')?.value || '');
+}
+
+function setSurvSort(s) { surv_sort = s; initSopravvissuti(); }
+
+function toggleSurvSet(name) {
+  surv_setFilter = surv_setFilter === name ? null : name;
+  initSopravvissuti();
+}
+
+function renderSopravvissuti(filter) {
+  const f = (filter||'').toLowerCase();
+  const list = document.getElementById('surv-list');
+  let filtered = SURVIVORS.filter(s =>
+    (!surv_setFilter || s.set === surv_setFilter) &&
+    (s.name.toLowerCase().includes(f) || s.id.includes(f))
+  );
+  if (surv_sort === 'set') {
+    // Preserve natural set order (as in array), then by id within set
+    filtered.sort((a,b) => {
+      const ai = SURVIVORS.indexOf(a), bi = SURVIVORS.indexOf(b);
+      return ai - bi;
+    });
+  } else {
+    filtered.sort((a,b) => a.name.localeCompare(b.name));
+  }
+  if (!filtered.length) {
+    list.innerHTML = '<div style="text-align:center;color:rgba(245,232,208,0.4);padding:20px;font-family:Cinzel,serif;font-size:12px">Nessun sopravvissuto trovato</div>';
+    return;
+  }
+  if (surv_sort === 'set') {
+    const groups = {};
+    const setOrder = [...new Set(SURVIVORS.map(s=>s.set))];
+    filtered.forEach(s => { if(!groups[s.set]) groups[s.set]=[]; groups[s.set].push(s); });
+    list.innerHTML = setOrder.filter(k=>groups[k]).map(setName => {
+      const label = setName;
+      return `<div style="font-family:'Cinzel',serif;font-size:11px;color:var(--gold);letter-spacing:2px;margin:16px 0 8px;display:flex;align-items:center;gap:8px">
+        ${label.toUpperCase()}
+        <span style="flex:1;height:1px;background:rgba(201,168,76,0.2)"></span>
+      </div>` + groups[setName].map(s => survivorCardHtml(s, false)).join('');
+    }).join('');
+  } else {
+    list.innerHTML = filtered.map(s => survivorCardHtml(s, false)).join('');
+  }
 }
 
 
