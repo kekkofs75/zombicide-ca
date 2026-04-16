@@ -779,10 +779,10 @@ function renderSopravvissuti(filter) {
       return `<div style="font-family:'Cinzel',serif;font-size:11px;color:var(--gold);letter-spacing:2px;margin:16px 0 8px;display:flex;align-items:center;gap:8px">
         ${label.toUpperCase()}
         <span style="flex:1;height:1px;background:rgba(201,168,76,0.2)"></span>
-      </div>` + groups[setName].map(s => survivorCardHtml(s, false)).join('');
+      </div>` + groups[setName].map(s => '<div style="margin-bottom:12px">' + survivorCardHtml(s, false) + '</div>').join('');
     }).join('');
   } else {
-    list.innerHTML = filtered.map(s => survivorCardHtml(s, false)).join('');
+    list.innerHTML = filtered.map(s => '<div style="margin-bottom:12px">' + survivorCardHtml(s, false) + '</div>').join('');
   }
 }
 
