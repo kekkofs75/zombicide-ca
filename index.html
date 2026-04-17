@@ -487,7 +487,12 @@ function showScreen(id,pushState=true){document.querySelectorAll('.screen').forE
 window.addEventListener('popstate',e=>{const cur=document.querySelector('.screen.active');if(!cur)return;if(cur.id==='screen-home'){history.pushState({screen:'screen-home'},'','');return;}if(cur.id==='screen-freepick'){showScreen('screen-draft',false);return;}showScreen('screen-home',false);});
 history.pushState({screen:'screen-home'},'','');
 
-function openSkillModal(e,name,level){e.stopPropagation();document.getElementById('modal-skill-name').textContent=name;const labels={blue:'Livello Blu',yellow:'Livello Giallo',orange:'Livello Arancione',red:'Livello Rosso'};const badge=document.getElementById('modal-level-badge');badge.className='modal-level-badge '+level;badge.textContent=labels[level]||level;const desc=SKILL_DESCRIPTIONS[name];document.getElementById('modal-desc-en').textContent=desc?desc.en:'— Descrizione non ancora caricata —';document.getElementById('modal-desc-it').textContent=desc?desc.it:'— Description not yet loaded —';document.getElementById('skill-modal').classList.add('open');}
+function openSkillModal(e,name,level){e.stopPropagation();document.getElementById('modal-skill-name').textContent=name;const labels={blue:'Livello Blu',yellow:'Livello Giallo',orange:'Livello Arancione',red:'Livello Rosso'};const badge=document.getElementById('modal-level-badge');badge.className='modal-level-badge '+level;badge.textContent=labels[level]||level;const desc=SKILL_DESCRIPTIONS[name]||(()=>{
+  if(/^Collector:/i.test(name)) return SKILL_DESCRIPTIONS['Collector: [Zombie type]'];
+  if(/^Ironclad:/i.test(name)) return SKILL_DESCRIPTIONS['Ironclad: [Zombie type]'];
+  if(/^Starts with/i.test(name)) return SKILL_DESCRIPTIONS['Starts with [Equipment]'];
+  return null;
+})();document.getElementById('modal-desc-en').textContent=desc?desc.en:'— Descrizione non ancora caricata —';document.getElementById('modal-desc-it').textContent=desc?desc.it:'— Description not yet loaded —';document.getElementById('skill-modal').classList.add('open');}
 function closeSkillModal(){document.getElementById('skill-modal').classList.remove('open');}
 function openCardModal(e,id){e.stopPropagation();const s=SURVIVORS.find(x=>x.id===id);if(!s)return;document.getElementById('card-modal-img').src=s.card;document.getElementById('card-modal').classList.add('open');}
 function closeCardModal(){document.getElementById('card-modal').classList.remove('open');}
