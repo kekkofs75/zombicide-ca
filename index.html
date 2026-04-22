@@ -268,6 +268,12 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
   <div class="setup-group"><span class="setup-label">SOPRAVVISSUTI PESCATI A TESTA</span><div class="number-control"><button class="num-btn" onclick="adjust('draw',-1)">−</button><div class="num-display" id="display-draw">3</div><button class="num-btn" onclick="adjust('draw',1)">+</button></div></div>
   <div class="setup-group"><span class="setup-label">SOPRAVVISSUTI TENUTI A TESTA</span><div class="number-control"><button class="num-btn" onclick="adjust('keep',-1)">−</button><div class="num-display" id="display-keep">2</div><button class="num-btn" onclick="adjust('keep',1)">+</button></div></div>
   <div class="setup-group"><span class="setup-label">SET INCLUSI</span><div class="sets-grid" id="sets-grid"></div></div>
+  <div class="setup-group">
+    <span class="setup-label">MINIATURA</span>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <div class="set-chip" id="chip-sans-min" onclick="toggleSansMin()">Includi senza miniatura</div>
+    </div>
+  </div>
   <button class="btn-primary" onclick="startDraft()">⚔ INIZIA IL DRAFT</button>
 </div>
 
@@ -494,13 +500,13 @@ function openSkillModal(e,name,level){e.stopPropagation();document.getElementByI
   return null;
 })();document.getElementById('modal-desc-en').textContent=desc?desc.en:'— Descrizione non ancora caricata —';document.getElementById('modal-desc-it').textContent=desc?desc.it:'— Description not yet loaded —';document.getElementById('skill-modal').classList.add('open');}
 function closeSkillModal(){document.getElementById('skill-modal').classList.remove('open');}
-function openCardModal(e,id){e.stopPropagation();const s=SURVIVORS.find(x=>x.id===id);if(!s)return;document.getElementById('card-modal-img').src=s.card;document.getElementById('card-modal').classList.add('open');}
+function openCardModal(e,id){e.stopPropagation();const s=SURVIVORS.find(x=>x.id===id);if(!s||!s.card)return;document.getElementById('card-modal-img').src=s.card;document.getElementById('card-modal').classList.add('open');}
 function closeCardModal(){document.getElementById('card-modal').classList.remove('open');}
 
 function renderCapacita(filter){const f=(filter||'').toLowerCase().trim();const list=document.getElementById('capacita-list');const entries=Object.entries(SKILL_DESCRIPTIONS).filter(([n])=>n.toLowerCase().includes(f)).sort((a,b)=>a[0].localeCompare(b[0]));if(!entries.length){list.innerHTML='<div style="text-align:center;color:rgba(245,232,208,0.4);padding:20px;font-family:Cinzel,serif;font-size:12px">Nessuna capacità trovata</div>';return;}list.innerHTML=entries.map(([name,desc])=>{const sid=name.replace(/[^a-zA-Z0-9]/g,'_');return`<div class="capacita-item" onclick="toggleCapacita('${sid}')"><div class="capacita-header"><span class="capacita-name">${name}</span><span class="capacita-arrow" id="arr-${sid}">▸</span></div><div class="capacita-body" id="cap-${sid}" style="display:none"><div class="capacita-en">${desc.en}</div><div class="capacita-it">${desc.it}</div></div></div>`;}).join('');}
 function toggleCapacita(sid){const body=document.getElementById('cap-'+sid);const arr=document.getElementById('arr-'+sid);if(!body)return;const open=body.style.display==='none';body.style.display=open?'block':'none';if(arr)arr.textContent=open?'▾':'▸';}
 
-const S={players:3,draw:3,keep:2,activeSets:[],availableSets:[],pool:[],takenIds:new Set(),currentPlayerIndex:0,currentDraw:[],selectedIds:[],freePickSurvivor:null,playerResults:[],_tempFreePickId:null,_fpSetFilter:null};
+const S={players:3,draw:3,keep:2,activeSets:[],availableSets:[],pool:[],takenIds:new Set(),currentPlayerIndex:0,currentDraw:[],selectedIds:[],freePickSurvivor:null,playerResults:[],_tempFreePickId:null,_fpSetFilter:null,includeSansMin:false};
 function encodeId(s){return s.replace(/[^a-zA-Z0-9]/g,'_');}
 function initSets(){
   const sets=[...new Set(SURVIVORS.map(s=>s.set))];
@@ -512,7 +518,8 @@ function initSets(){
 }
 function toggleSet(id){const name=S.availableSets.find(s=>encodeId(s)===id);if(!name)return;const i=S.activeSets.indexOf(name);if(i>-1){if(S.activeSets.length>1)S.activeSets.splice(i,1);}else S.activeSets.push(name);S.availableSets.forEach(s=>{const el=document.getElementById('set-'+encodeId(s));if(el)el.className='set-chip'+(S.activeSets.includes(s)?' active':'');});}
 function adjust(key,delta){const limits={players:[2,6],draw:[1,6],keep:[1,5]};const[mn,mx]=limits[key];S[key]=Math.max(mn,Math.min(mx,S[key]+delta));if(key==='draw'&&S.keep>S.draw){S.keep=S.draw;document.getElementById('display-keep').textContent=S.keep;}if(key==='keep'&&S.keep>S.draw){S.keep=S.draw;}document.getElementById('display-'+key).textContent=S[key];}
-function startDraft(){S.pool=SURVIVORS.filter(s=>S.activeSets.includes(s.set));if(S.pool.length<S.players*S.keep){alert('Non ci sono abbastanza Sopravvissuti nel pool!');return;}S.takenIds=new Set();S.currentPlayerIndex=0;S.playerResults=Array.from({length:S.players},()=>[]);showScreen('screen-draft');dealToCurrentPlayer();}
+function toggleSansMin(){S.includeSansMin=!S.includeSansMin;const el=document.getElementById('chip-sans-min');if(el)el.className='set-chip'+(S.includeSansMin?' active':'');}
+function startDraft(){S.pool=SURVIVORS.filter(s=>S.activeSets.includes(s.set)&&(S.includeSansMin||s.miniatura!==false));if(S.pool.length<S.players*S.keep){alert('Non ci sono abbastanza Sopravvissuti nel pool!');return;}S.takenIds=new Set();S.currentPlayerIndex=0;S.playerResults=Array.from({length:S.players},()=>[]);showScreen('screen-draft');dealToCurrentPlayer();}
 function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
 function dealToCurrentPlayer(){const available=S.pool.filter(s=>!S.takenIds.has(s.id));S.currentDraw=shuffle([...available]).slice(0,S.draw);S.selectedIds=[];S.freePickSurvivor=null;renderDraftScreen();}
 function totalSelected(){return S.selectedIds.length+(S.freePickSurvivor?1:0);}
@@ -735,6 +742,7 @@ function toggleAccordion(id) {
 // ===== SOPRAVVISSUTI =====
 let surv_sort = 'set';
 let surv_setFilter = null;
+let surv_showSansMin = false;
 
 function initSopravvissuti() {
   const sets = [...new Set(SURVIVORS.map(s => s.set))];
@@ -744,11 +752,13 @@ function initSopravvissuti() {
   const sorts = [{k:'set',label:'Set'},{k:'nome',label:'A-Z'}];
   document.getElementById('surv-sort-btns').innerHTML = sorts.map(s =>
     `<div class="set-chip ${surv_sort===s.k?'active':''}" style="font-size:10px;padding:6px 12px" onclick="setSurvSort('${s.k}')">${s.label}</div>`
-  ).join('');
+  ).join('')
+  + `<div class="set-chip ${surv_showSansMin?'active':''}" style="font-size:10px;padding:6px 12px" onclick="toggleSurvSansMin()">Senza miniatura</div>`;
   renderSopravvissuti(document.getElementById('surv-search')?.value || '');
 }
 
 function setSurvSort(s) { surv_sort = s; initSopravvissuti(); }
+function toggleSurvSansMin() { surv_showSansMin = !surv_showSansMin; initSopravvissuti(); }
 
 function toggleSurvSet(name) {
   surv_setFilter = surv_setFilter === name ? null : name;
@@ -760,7 +770,8 @@ function renderSopravvissuti(filter) {
   const list = document.getElementById('surv-list');
   let filtered = SURVIVORS.filter(s =>
     (!surv_setFilter || s.set === surv_setFilter) &&
-    (s.name.toLowerCase().includes(f) || s.id.includes(f))
+    (s.name.toLowerCase().includes(f) || s.id.includes(f)) &&
+    (surv_showSansMin || s.miniatura !== false)
   );
   if (surv_sort === 'set') {
     // Preserve natural set order (as in array), then by id within set
