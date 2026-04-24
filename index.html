@@ -655,10 +655,30 @@ function renderBestiario(filter) {
 
 function formatZombieRules(text) {
   if (!text) return '';
-  return text.replace(
-    /Utilizza le regole del (Necromancer)\./g,
-    'Utilizza le regole del <span class="zombie-tipo-badge necromancer" style="cursor:pointer" onclick="openNecroRulesPopup(event)">$1</span>.'
-  );
+  return text
+    .replace(
+      /Utilizza le regole del (Necromancer)\./g,
+      'Utilizza le regole del <span class="zombie-tipo-badge necromancer" style="cursor:pointer" onclick="openNecroRulesPopup(event)">$1</span>.'
+    )
+    .replace(
+      /Utilizza le regole dell'(Abomination)\./g,
+      "Utilizza le regole dell'<span class=\"zombie-tipo-badge abomination\" style=\"cursor:pointer\" onclick=\"openAbomRulesPopup(event)\">$1</span>."
+    );
+}
+
+function openAbomRulesPopup(event) {
+  event.stopPropagation();
+  const z = ZOMBIES.find(x => x.id === 'ZA001');
+  if (!z) return;
+  const tc = TIPO_COLORS['Abomination'] || {cls:'abomination'};
+  const rules = (z.regole_speciali || '').split('\n').map(l => l.trim()).filter(Boolean)
+    .map(l => l.startsWith('-') 
+      ? `<p style="margin:0 0 6px;padding-left:12px">${l}</p>` 
+      : `<p style="margin:0 0 10px">${l}</p>`).join('');
+  document.getElementById('necro-rules-title').textContent = 'Abomination';
+  document.getElementById('necro-rules-title').className = 'zombie-tipo-badge ' + tc.cls;
+  document.getElementById('necro-rules-body').innerHTML = rules;
+  document.getElementById('necro-rules-popup').classList.add('open');
 }
 
 function openNecroRulesPopup(e) {
