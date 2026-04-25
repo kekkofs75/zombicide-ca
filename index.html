@@ -662,29 +662,27 @@ function formatZombieRules(text) {
     )
     .replace(
       /Utilizza le regole dell'(Abomination)\./g,
-      "Utilizza le regole dell'<span class=\"zombie-tipo-badge abomination\" style=\"cursor:pointer\" onclick=\"openAbomRulesPopup(event)\">$1</span>."
+      'Utilizza le regole dell\'<span class="zombie-tipo-badge abomination" style="cursor:pointer" onclick="openAbomRulesPopup(event)">$1</span>.'
     );
 }
 
-function openAbomRulesPopup(event) {
-  event.stopPropagation();
+function openAbomRulesPopup(e) {
+  e.stopPropagation();
   const z = ZOMBIES.find(x => x.id === 'ZA001');
   if (!z) return;
-  const tc = TIPO_COLORS['Abomination'] || {cls:'abomination'};
-  const rules = (z.regole_speciali || '').split('\n').map(l => l.trim()).filter(Boolean)
-    .map(l => l.startsWith('-') 
-      ? `<p style="margin:0 0 6px;padding-left:12px">${l}</p>` 
-      : `<p style="margin:0 0 10px">${l}</p>`).join('');
-  document.getElementById('necro-rules-title').textContent = 'Abomination';
-  document.getElementById('necro-rules-title').className = 'zombie-tipo-badge ' + tc.cls;
-  document.getElementById('necro-rules-body').innerHTML = rules;
-  document.getElementById('necro-rules-popup').classList.add('open');
+  const badge = document.getElementById('necro-rules-badge');
+  if (badge) { badge.textContent = 'Abomination'; badge.className = 'zombie-tipo-badge abomination'; }
+  const rules = (z.regole_speciali || '').replace(/ ◆/g, '<br>◆ ');
+  document.getElementById('necro-rules-text').innerHTML = rules;
+  document.getElementById('necro-rules-modal').classList.add('open');
 }
 
 function openNecroRulesPopup(e) {
   e.stopPropagation();
   const necro = ZOMBIES.find(z => z.id === 'ZN001');
   if (!necro) return;
+  const badge = document.getElementById('necro-rules-badge');
+  if (badge) { badge.textContent = 'Necromancer'; badge.className = 'zombie-tipo-badge necromancer'; }
   document.getElementById('necro-rules-text').textContent = necro.regole_speciali;
   document.getElementById('necro-rules-modal').classList.add('open');
 }
@@ -996,7 +994,7 @@ if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
     <div class="modal-handle"></div>
     <button class="modal-close" onclick="document.getElementById('necro-rules-modal').classList.remove('open')">×</button>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-      <span class="zombie-tipo-badge necromancer">Necromancer</span>
+      <span id="necro-rules-badge" class="zombie-tipo-badge necromancer">Necromancer</span>
       <span style="font-family:'Cinzel',serif;font-size:11px;color:rgba(245,232,208,0.5)">Regole base</span>
     </div>
     <div id="necro-rules-text" style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7"></div>
