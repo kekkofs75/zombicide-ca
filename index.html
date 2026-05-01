@@ -149,7 +149,7 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 .zombie-tipo-badge{font-family:'Cinzel',serif;font-size:10px;padding:2px 8px;border-radius:10px;letter-spacing:1px;}
 .zombie-tipo-badge.walker{background:rgba(30,60,120,0.3);border:1px solid rgba(60,110,200,0.6);color:#88aaff;}
 .zombie-tipo-badge.runner{background:rgba(200,120,0,0.25);border:1px solid rgba(200,120,0,0.5);color:#ffbb44;}
-.zombie-tipo-badge.fatty{background:rgba(140,120,0,0.25);border:1px solid rgba(210,190,0,0.6);color:#fff176;}
+.zombie-tipo-badge.brute{background:rgba(140,120,0,0.25);border:1px solid rgba(210,190,0,0.6);color:#fff176;}
 .zombie-tipo-badge.abomination{background:rgba(160,10,10,0.25);border:1px solid rgba(160,10,10,0.5);color:#ff7070;}
 .zombie-tipo-badge.necromancer{background:rgba(80,20,120,0.3);border:1px solid rgba(130,40,180,0.6);color:#cc88ff;}
 .zombie-tipo-badge.wolfz{background:rgba(90,90,90,0.3);border:1px solid rgba(140,140,140,0.5);color:#cccccc;}
@@ -157,7 +157,7 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 .zombie-tipo-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;display:inline-block;}
 .zombie-tipo-dot.walker{background:#88aaff;box-shadow:0 0 4px #88aaff;}
 .zombie-tipo-dot.runner{background:#ffbb44;box-shadow:0 0 4px #ffbb44;}
-.zombie-tipo-dot.fatty{background:#fff176;box-shadow:0 0 4px #fff176;}
+.zombie-tipo-dot.brute{background:#fff176;box-shadow:0 0 4px #fff176;}
 .zombie-tipo-dot.abomination{background:#ff7070;box-shadow:0 0 4px #ff7070;}
 .zombie-tipo-dot.necromancer{background:#cc88ff;box-shadow:0 0 4px #cc88ff;}
 .zombie-tipo-dot.wolfz{background:#cccccc;box-shadow:0 0 4px #cccccc;}
@@ -332,10 +332,11 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
   <div class="priority-list">
     <div class="priority-row"><div class="priority-num">1</div><div class="priority-name">Survivor</div></div>
     <div class="priority-row"><div class="priority-num">2</div><div class="priority-name">Dragon (any kind)</div></div>
+    <div class="priority-row" style="border-top:none;border-radius:0 0 10px 10px;margin-top:-8px"><div class="priority-num" style="color:transparent">2</div><div class="priority-name">Zombie Giant</div></div>
     <div class="priority-row"><div class="priority-num">3</div><div class="priority-name">Murder of Crowz</div></div>
     <div class="priority-row" style="border-top:none;border-radius:0 0 10px 10px;margin-top:-8px"><div class="priority-num" style="color:transparent">3</div><div class="priority-name">Swarm of Ratz</div></div>
     <div class="priority-row" style="margin-top:8px"><div class="priority-num">4</div><div class="priority-name">Walker (any kind)</div></div>
-    <div class="priority-row"><div class="priority-num">5</div><div class="priority-name">Fatty (any kind)</div></div>
+    <div class="priority-row"><div class="priority-num">5</div><div class="priority-name">Brute (any kind)</div></div>
     <div class="priority-row" style="border-top:none;border-radius:0 0 10px 10px;margin-top:-8px"><div class="priority-num" style="color:transparent">5</div><div class="priority-name">Abomination (any kind)</div></div>
     <div class="priority-row" style="margin-top:8px"><div class="priority-num">6</div><div class="priority-name">Runner (any kind)</div></div>
     <div class="priority-row"><div class="priority-num">7</div><div class="priority-name">Zombie Wolfz</div></div>
@@ -561,7 +562,7 @@ function restartDraft(){S.currentPlayerIndex=0;S.takenIds=new Set();S.playerResu
 // ===== BESTIARY =====
 const TIPO_COLORS = {
   'Walker':      {cls:'walker',      order:2},
-  'Fatty':       {cls:'fatty',       order:3},
+  'Brute':       {cls:'brute',       order:3},
   'Abomination': {cls:'abomination', order:3},
   'Runner':      {cls:'runner',      order:4},
   'Wolfz':       {cls:'wolfz',       order:5},
