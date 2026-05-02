@@ -665,16 +665,34 @@ function renderBestiario(filter) {
 
 function formatZombieRules(text) {
   if (!text) return '';
-  return text.replace(
-    /Utilizza le regole del (Necromancer)\./g,
-    'Utilizza le regole del <span class="zombie-tipo-badge necromancer" style="cursor:pointer" onclick="openNecroRulesPopup(event)">$1</span>.'
-  );
+  return text
+    .replace(
+      /Utilizza le regole del (Necromancer)\./g,
+      'Utilizza le regole del <span class="zombie-tipo-badge necromancer" style="cursor:pointer" onclick="openNecroRulesPopup(event)">$1</span>.'
+    )
+    .replace(
+      /Utilizza le regole dell'(Abomination)\./g,
+      "Utilizza le regole dell\'<span class=\"zombie-tipo-badge abomination\" style=\"cursor:pointer\" onclick=\"openAbomRulesPopup(event)\">$1</span>."
+    );
+}
+
+function openAbomRulesPopup(e) {
+  e.stopPropagation();
+  const z = ZOMBIES.find(x => x.id === 'ZA001');
+  if (!z) return;
+  const badge = document.getElementById('necro-rules-badge');
+  if (badge) { badge.textContent = 'Abomination'; badge.className = 'zombie-tipo-badge abomination'; }
+  const rules = (z.regole_speciali || '').replace(/ ◆/g, '<br>◆ ');
+  document.getElementById('necro-rules-text').innerHTML = rules;
+  document.getElementById('necro-rules-modal').classList.add('open');
 }
 
 function openNecroRulesPopup(e) {
   e.stopPropagation();
   const necro = ZOMBIES.find(z => z.id === 'ZN001');
   if (!necro) return;
+  const badge = document.getElementById('necro-rules-badge');
+  if (badge) { badge.textContent = 'Necromancer'; badge.className = 'zombie-tipo-badge necromancer'; }
   document.getElementById('necro-rules-text').textContent = necro.regole_speciali;
   document.getElementById('necro-rules-modal').classList.add('open');
 }
@@ -986,7 +1004,7 @@ if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
     <div class="modal-handle"></div>
     <button class="modal-close" onclick="document.getElementById('necro-rules-modal').classList.remove('open')">×</button>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-      <span class="zombie-tipo-badge necromancer">Necromancer</span>
+      <span id="necro-rules-badge" class="zombie-tipo-badge necromancer">Necromancer</span>
       <span style="font-family:'Cinzel',serif;font-size:11px;color:rgba(245,232,208,0.5)">Regole base</span>
     </div>
     <div id="necro-rules-text" style="font-size:13px;color:rgba(245,232,208,0.75);line-height:1.7"></div>
