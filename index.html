@@ -447,7 +447,14 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 <div class="screen" id="screen-bestiario">
   <button class="back-btn" onclick="showScreen('screen-home')">← HOME</button>
   <div class="section-title">Bestiario</div>
-  <div id="bestiary-set-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;"></div>
+  <div class="set-filter-accordion" style="margin-bottom:12px">
+    <div class="set-filter-header" onclick="toggleSetAccordion('body-besti-sets','arrow-besti-sets')">
+      <span class="set-filter-label">Filtri set</span>
+      <span class="set-filter-badge" id="badge-besti-sets">—</span>
+      <span class="set-filter-arrow" id="arrow-besti-sets">▾</span>
+    </div>
+    <div class="set-filter-body" id="body-besti-sets"><div id="bestiary-set-chips" style="display:contents"></div></div>
+  </div>
   <input class="search-bar" type="text" placeholder="Cerca uno zombie..." oninput="renderBestiario(this.value)" id="bestiary-search">
   <div id="bestiary-list"></div>
 </div>
@@ -625,7 +632,7 @@ function initBestiario() {
   // Set chips (above search)
   chips.innerHTML = sets.map(s =>
     `<div class="set-chip ${bestiary_setFilter===s?'active':''}" onclick="toggleBestiarioSet('${s.replace(/'/g,"\\'")}');">${s}</div>`
-  ).join('');
+  ).join('');updateBestiSetsBadge();
   // Sort buttons (below search) - rendered into separate div
   let sortDiv = document.getElementById('bestiary-sort-btns');
   if (!sortDiv) {
@@ -812,6 +819,11 @@ function updateFpSetsBadge() {
 function updateSurvSetsBadge() {
   const el = document.getElementById('badge-surv-sets');
   if (el) el.textContent = surv_setFilter ? surv_setFilter : 'Tutti i set';
+}
+function updateBestiSetsBadge() {
+  const sets = [...new Set(ZOMBIES.map(z => z.set))];
+  const el = document.getElementById('badge-besti-sets');
+  if (el) el.textContent = bestiary_setFilter ? bestiary_setFilter : 'Tutti i set';
 }
 function toggleAccordion(id) {
   const body = document.getElementById(id);
