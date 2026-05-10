@@ -51,6 +51,15 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 .sets-grid{display:flex;flex-wrap:wrap;gap:8px;}
 .set-chip{padding:8px 14px;border-radius:20px;border:1px solid rgba(201,168,76,0.3);background:rgba(255,255,255,0.04);color:var(--text-light);font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;cursor:pointer;}
 .set-chip.active{background:rgba(201,168,76,0.2);border-color:var(--gold);color:var(--gold-light);}
+.set-filter-accordion{border:1px solid rgba(201,168,76,0.2);border-radius:8px;overflow:hidden;width:100%;}
+.set-filter-header{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;user-select:none;background:rgba(255,255,255,0.02);}
+.set-filter-header:active{background:rgba(201,168,76,0.07);}
+.set-filter-label{font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;color:rgba(245,232,208,0.6);flex:1;}
+.set-filter-badge{font-family:'Cinzel',serif;font-size:11px;color:var(--gold);background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.25);border-radius:10px;padding:2px 8px;white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis;}
+.set-filter-arrow{font-size:11px;color:rgba(245,232,208,0.4);transition:transform 0.2s;flex-shrink:0;}
+.set-filter-arrow.open{transform:rotate(180deg);}
+.set-filter-body{padding:10px 12px 12px;display:none;flex-wrap:wrap;gap:8px;}
+.set-filter-body.open{display:flex;}
 .draft-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:12px 16px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(201,168,76,0.15);}
 .player-indicator{font-family:'Cinzel',serif;font-size:13px;color:var(--gold-light);}
 .player-indicator span{color:var(--fire);font-weight:700;}
@@ -267,7 +276,16 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
   <div class="setup-group"><span class="setup-label">NUMERO GIOCATORI</span><div class="number-control"><button class="num-btn" onclick="adjust('players',-1)">−</button><div class="num-display" id="display-players">3</div><button class="num-btn" onclick="adjust('players',1)">+</button></div></div>
   <div class="setup-group"><span class="setup-label">SOPRAVVISSUTI PESCATI A TESTA</span><div class="number-control"><button class="num-btn" onclick="adjust('draw',-1)">−</button><div class="num-display" id="display-draw">3</div><button class="num-btn" onclick="adjust('draw',1)">+</button></div></div>
   <div class="setup-group"><span class="setup-label">SOPRAVVISSUTI TENUTI A TESTA</span><div class="number-control"><button class="num-btn" onclick="adjust('keep',-1)">−</button><div class="num-display" id="display-keep">2</div><button class="num-btn" onclick="adjust('keep',1)">+</button></div></div>
-  <div class="setup-group"><span class="setup-label">SET INCLUSI</span><div class="sets-grid" id="sets-grid"></div></div>
+  <div class="setup-group"><span class="setup-label">SET INCLUSI</span>
+    <div class="set-filter-accordion">
+      <div class="set-filter-header" onclick="toggleSetAccordion('body-setup-sets','arrow-setup-sets')">
+        <span class="set-filter-label">Filtri set</span>
+        <span class="set-filter-badge" id="badge-setup-sets">—</span>
+        <span class="set-filter-arrow" id="arrow-setup-sets">▾</span>
+      </div>
+      <div class="set-filter-body" id="body-setup-sets"><div class="sets-grid" id="sets-grid" style="display:contents"></div></div>
+    </div>
+  </div>
   <div class="setup-group">
     <span class="setup-label">MINIATURA</span>
     <div style="display:flex;flex-wrap:wrap;gap:8px">
@@ -292,7 +310,14 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
   <button class="back-btn" onclick="cancelFreePick()">← INDIETRO</button>
   <div class="section-title">Scelta Libera</div>
   <div class="info-box">Scegli un Sopravvissuto dalla collezione. Quelli già presi non sono disponibili.</div>
-  <div id="fp-set-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div>
+  <div class="set-filter-accordion" style="margin-bottom:12px">
+    <div class="set-filter-header" onclick="toggleSetAccordion('body-fp-sets','arrow-fp-sets')">
+      <span class="set-filter-label">Filtri set</span>
+      <span class="set-filter-badge" id="badge-fp-sets">—</span>
+      <span class="set-filter-arrow" id="arrow-fp-sets">▾</span>
+    </div>
+    <div class="set-filter-body" id="body-fp-sets"><div id="fp-set-chips" style="display:contents"></div></div>
+  </div>
   <input class="search-bar" type="text" placeholder="Cerca per nome..." oninput="filterFreePick(this.value)" id="free-pick-search">
   <div class="survivors-grid" id="freepick-grid"></div>
   <div class="draft-actions"><button class="btn-primary" id="btn-confirm-free" onclick="confirmFreePick()" disabled>CONFERMA</button></div>
@@ -310,7 +335,14 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
 <div class="screen" id="screen-sopravvissuti">
   <button class="back-btn" onclick="showScreen('screen-home')">← HOME</button>
   <div class="section-title">Sopravvissuti</div>
-  <div id="surv-set-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;"></div>
+  <div class="set-filter-accordion" style="margin-bottom:12px">
+    <div class="set-filter-header" onclick="toggleSetAccordion('body-surv-sets','arrow-surv-sets')">
+      <span class="set-filter-label">Filtri set</span>
+      <span class="set-filter-badge" id="badge-surv-sets">—</span>
+      <span class="set-filter-arrow" id="arrow-surv-sets">▾</span>
+    </div>
+    <div class="set-filter-body" id="body-surv-sets"><div id="surv-set-chips" style="display:contents"></div></div>
+  </div>
   <input class="search-bar" type="text" placeholder="Cerca un sopravvissuto..." oninput="renderSopravvissuti(this.value)" id="surv-search">
   <div id="surv-sort-btns" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
   <div id="surv-list" style="margin-bottom:20px"></div>
@@ -515,9 +547,9 @@ function initSets(){
   // Build display labels (show autore for Special Guest)
   const setLabels = {};
   sets.forEach(set => { setLabels[set] = set; });
-  document.getElementById('sets-grid').innerHTML=sets.map(s=>`<div class="set-chip active" id="set-${encodeId(s)}" onclick="toggleSet('${encodeId(s)}')">${s}</div>`).join('');
+  document.getElementById('sets-grid').innerHTML=sets.map(s=>`<div class="set-chip active" id="set-${encodeId(s)}" onclick="toggleSet('${encodeId(s)}')">${s}</div>`).join('');updateSetupSetsBadge();
 }
-function toggleSet(id){const name=S.availableSets.find(s=>encodeId(s)===id);if(!name)return;const i=S.activeSets.indexOf(name);if(i>-1){if(S.activeSets.length>1)S.activeSets.splice(i,1);}else S.activeSets.push(name);S.availableSets.forEach(s=>{const el=document.getElementById('set-'+encodeId(s));if(el)el.className='set-chip'+(S.activeSets.includes(s)?' active':'');});}
+function toggleSet(id){const name=S.availableSets.find(s=>encodeId(s)===id);if(!name)return;const i=S.activeSets.indexOf(name);if(i>-1){if(S.activeSets.length>1)S.activeSets.splice(i,1);}else S.activeSets.push(name);S.availableSets.forEach(s=>{const el=document.getElementById('set-'+encodeId(s));if(el)el.className='set-chip'+(S.activeSets.includes(s)?' active':'');});updateSetupSetsBadge();}
 function adjust(key,delta){const limits={players:[2,6],draw:[1,6],keep:[1,5]};const[mn,mx]=limits[key];S[key]=Math.max(mn,Math.min(mx,S[key]+delta));if(key==='draw'&&S.keep>S.draw){S.keep=S.draw;document.getElementById('display-keep').textContent=S.keep;}if(key==='keep'&&S.keep>S.draw){S.keep=S.draw;}document.getElementById('display-'+key).textContent=S[key];}
 function toggleSansMin(){S.includeSansMin=!S.includeSansMin;const el=document.getElementById('chip-sans-min');if(el)el.className='set-chip'+(S.includeSansMin?' active':'');}
 function startDraft(){S.pool=SURVIVORS.filter(s=>S.activeSets.includes(s.set)&&(S.includeSansMin||s.miniatura!==false));if(S.pool.length<S.players*S.keep){alert('Non ci sono abbastanza Sopravvissuti nel pool!');return;}S.takenIds=new Set();S.currentPlayerIndex=0;S.playerResults=Array.from({length:S.players},()=>[]);showScreen('screen-draft');dealToCurrentPlayer();}
@@ -545,7 +577,7 @@ function showFreePick(){S._tempFreePickId=null;S._fpSetFilter=null;S.fpIncludeSa
 function toggleFpSansMin(){S.fpIncludeSansMin=!S.fpIncludeSansMin;renderFpSetChips();renderFreePickGrid(document.getElementById('free-pick-search').value);}
 function renderFpSetChips(){
   document.getElementById('fp-set-chips').innerHTML=S.activeSets.map(s=>`<div class="set-chip ${S._fpSetFilter===s?'active':''}" onclick="toggleFpSet('${encodeId(s)}')">${s}</div>`).join('')
-  +`<div class="set-chip ${S.fpIncludeSansMin?'active':''}" style="border-color:rgba(139,0,0,0.5)" onclick="toggleFpSansMin()">Senza miniatura</div>`;
+  +`<div class="set-chip ${S.fpIncludeSansMin?'active':''}" style="border-color:rgba(139,0,0,0.5)" onclick="toggleFpSansMin()">Senza miniatura</div>`;updateFpSetsBadge();
 }
 function toggleFpSet(id){const name=S.availableSets.find(s=>encodeId(s)===id);S._fpSetFilter=S._fpSetFilter===name?null:name;renderFpSetChips();renderFreePickGrid(document.getElementById('free-pick-search').value);}
 function renderFreePickGrid(filter){const drawnIds=new Set(S.currentDraw.map(s=>s.id));const available=SURVIVORS.filter(s=>!S.takenIds.has(s.id)&&!drawnIds.has(s.id)&&S.activeSets.includes(s.set)&&(!S._fpSetFilter||s.set===S._fpSetFilter)&&s.name.toLowerCase().includes((filter||'').toLowerCase())&&(S.fpIncludeSansMin||s.miniatura!==false));const grid=document.getElementById('freepick-grid');if(!available.length){grid.innerHTML='<div style="text-align:center;color:rgba(245,232,208,0.4);padding:20px;font-family:Cinzel,serif;font-size:12px">Nessun Sopravvissuto disponibile</div>';document.getElementById('btn-confirm-free').disabled=true;return;}grid.innerHTML=available.map(s=>{const sel=S._tempFreePickId===s.id;const hasB2=s.skills.some(sk=>sk.level==='blue2');const col1=hasB2?s.skills.slice(0,5):s.skills.slice(0,4);const col2=hasB2?s.skills.slice(5):s.skills.slice(4);return`<div class="survivor-card ${sel?'selected':''}" id="fp-${s.id}" onclick="selectTempFree('${s.id}')"><img class="card-avatar" src="${s.avatar}" alt="${s.name}" onclick="openCardModal(event,'${s.id}')"><div class="card-body"><div><div class="card-top"><div><div class="card-name">${s.name}</div><div class="card-set">${s.set}${s.autore ? " · " + s.autore : ""}</div></div><div class="card-number">#${s.id}</div></div><div class="skills-preview">${s.skills.map(sk=>`<div class="skill-dot ${sk.level==='blue2'?'blue':sk.level}"></div>`).join('')}</div></div><button class="card-expand-btn" onclick="toggleSkills(event,'fpl-${s.id}')">▸ Abilità</button></div></div><div class="skills-expanded" id="skills-fpl-${s.id}"><div class="skills-columns"><div>${col1.map(sk=>skillItemHtml(sk)).join('')}</div><div>${col2.map(sk=>skillItemHtml(sk)).join('')}</div></div></div>`;}).join('');document.getElementById('btn-confirm-free').disabled=!S._tempFreePickId;}
@@ -762,6 +794,25 @@ function openZombieModal(e, id) {
 function closeZombieModal() { document.getElementById('zombie-modal').classList.remove('open'); }
 
 // ===== RULES ACCORDION =====
+function toggleSetAccordion(bodyId, arrowId) {
+  const body = document.getElementById(bodyId);
+  const arrow = document.getElementById(arrowId);
+  if (!body) return;
+  const isOpen = body.classList.toggle('open');
+  if (arrow) arrow.classList.toggle('open', isOpen);
+}
+function updateSetupSetsBadge() {
+  const el = document.getElementById('badge-setup-sets');
+  if (el) el.textContent = S.activeSets.length + '/' + S.availableSets.length;
+}
+function updateFpSetsBadge() {
+  const el = document.getElementById('badge-fp-sets');
+  if (el) el.textContent = S._fpSetFilter ? S._fpSetFilter : 'Tutti i set';
+}
+function updateSurvSetsBadge() {
+  const el = document.getElementById('badge-surv-sets');
+  if (el) el.textContent = surv_setFilter ? surv_setFilter : 'Tutti i set';
+}
 function toggleAccordion(id) {
   const body = document.getElementById(id);
   const arr = document.getElementById('arr-' + id);
@@ -780,7 +831,7 @@ function initSopravvissuti() {
   const sets = [...new Set(SURVIVORS.map(s => s.set))];
   document.getElementById('surv-set-chips').innerHTML = sets.map(s =>
     `<div class="set-chip ${surv_setFilter===s?'active':''}" onclick="toggleSurvSet('${s.replace(/'/g,"\\'")}')">${s}</div>`
-  ).join('');
+  ).join('');updateSurvSetsBadge();
   const sorts = [{k:'set',label:'Set'},{k:'nome',label:'A-Z'}];
   document.getElementById('surv-sort-btns').innerHTML = sorts.map(s =>
     `<div class="set-chip ${surv_sort===s.k?'active':''}" style="font-size:10px;padding:6px 12px" onclick="setSurvSort('${s.k}')">${s.label}</div>`
