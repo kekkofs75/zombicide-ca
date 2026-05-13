@@ -709,12 +709,13 @@ function renderBestiario(filter) {
   );
   // Sort
   if (bestiary_sort === 'tipo') {
-    // Group by tipo, sort groups by TIPO_COLORS.order, within group by name
+    // Sort: priority desc → tipo → card number
     filtered.sort((a,b) => {
-      const ao = (TIPO_COLORS[a.tipo]||{order:99}).order;
-      const bo = (TIPO_COLORS[b.tipo]||{order:99}).order;
-      if (ao !== bo) return ao - bo;
-      return a.name.localeCompare(b.name);
+      if (a.priorita !== b.priorita) return b.priorita - a.priorita;
+      if (a.tipo !== b.tipo) return a.tipo.localeCompare(b.tipo);
+      const na = parseInt(a.id.replace(/[A-Z]+/g,'')) || 0;
+      const nb = parseInt(b.id.replace(/[A-Z]+/g,'')) || 0;
+      return na - nb;
     });
   } else if (bestiary_sort === 'priorita') {
     filtered.sort((a,b) => a.priorita !== b.priorita ? a.priorita - b.priorita : a.name.localeCompare(b.name));
