@@ -659,7 +659,13 @@ ZOMBIES.forEach(z => {
 });
 
 function initBestiario() {
-  const sets = [...new Set(ZOMBIES.map(z => z.set))];
+  const SET_ORDER = ['Black Plague','Wulfsburg','Huntsman Pack','Green Horde','Friends and Foes','No Rest for the Wicked','Horde Box','Add-Ons','Special Guest'];
+  const rawSets = [...new Set(ZOMBIES.map(z => z.set))];
+  const sets = rawSets.sort((a,b)=>{
+    const ai=SET_ORDER.findIndex(s=>a.startsWith(s));
+    const bi=SET_ORDER.findIndex(s=>b.startsWith(s));
+    return (ai===-1?99:ai)-(bi===-1?99:bi);
+  });
   const chips = document.getElementById('bestiary-set-chips');
   const sorts = [
     {k:'tipo',    label:'Tipo'},
