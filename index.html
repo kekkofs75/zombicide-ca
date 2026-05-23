@@ -549,7 +549,7 @@ function toggleCapacita(sid){const body=document.getElementById('cap-'+sid);cons
 const S={players:3,draw:3,keep:2,activeSets:[],availableSets:[],pool:[],takenIds:new Set(),currentPlayerIndex:0,currentDraw:[],selectedIds:[],freePickSurvivor:null,playerResults:[],_tempFreePickId:null,_fpSetFilter:null,includeSansMin:false,fpIncludeSansMin:false};
 function encodeId(s){return s.replace(/[^a-zA-Z0-9]/g,'_');}
 function initSets(){
-  const SETUP_SET_ORDER=['Black Plague','Hero Box','Wulfsburg','Huntsman Pack','Green Horde','Friends and Foes','Horde Box','Stranger Things','Ultimate','Special Guest'];
+  const SETUP_SET_ORDER=['Black Plague','Wulfsburg','Hero Box','Huntsman Pack','Green Horde','Friends and Foes','Horde Box','Stranger Things','Ultimate','Special Guest'];
   const rawSets=[...new Set(SURVIVORS.map(s=>s.set))];
   const sets=rawSets.sort((a,b)=>{const ai=SETUP_SET_ORDER.findIndex(x=>a.startsWith(x));const bi=SETUP_SET_ORDER.findIndex(x=>b.startsWith(x));return(ai===-1?99:ai)-(bi===-1?99:bi);});
   S.availableSets=sets;S.activeSets=[...sets];
@@ -604,7 +604,7 @@ function toggleSkills(e,id){e.stopPropagation();const el=document.getElementById
 function showFreePick(){S._tempFreePickId=null;S._fpSetFilter=null;S.fpIncludeSansMin=S.includeSansMin;document.getElementById('free-pick-search').value='';showScreen('screen-freepick');renderFpSetChips();renderFreePickGrid('');}
 function toggleFpSansMin(){S.fpIncludeSansMin=!S.fpIncludeSansMin;renderFpSetChips();renderFreePickGrid(document.getElementById('free-pick-search').value);}
 function renderFpSetChips(){
-  const FP_SET_ORDER=['Black Plague','Hero Box','Wulfsburg','Huntsman Pack','Green Horde','Friends and Foes','Horde Box','Stranger Things','Ultimate','Special Guest'];
+  const FP_SET_ORDER=['Black Plague','Wulfsburg','Hero Box','Huntsman Pack','Green Horde','Friends and Foes','Horde Box','Stranger Things','Ultimate','Special Guest'];
   const sorted=[...S.activeSets].sort((a,b)=>{const ai=FP_SET_ORDER.findIndex(s=>a.startsWith(s));const bi=FP_SET_ORDER.findIndex(s=>b.startsWith(s));return(ai===-1?99:ai)-(bi===-1?99:bi);});
   document.getElementById('fp-set-chips').innerHTML=sorted.map(s=>`<div class="set-chip ${S._fpSetFilter===s?'active':''}" onclick="toggleFpSet('${encodeId(s)}')">${s}</div>`).join('')
   +`<div class="set-chip ${S.fpIncludeSansMin?'active':''}" style="border-color:rgba(139,0,0,0.5)" onclick="toggleFpSansMin()">Senza miniatura</div>`;updateFpSetsBadge();
@@ -885,7 +885,7 @@ let surv_setFilter = null;
 let surv_showSansMin = true;
 
 function initSopravvissuti() {
-  const SURV_SET_ORDER = ['Black Plague','Hero Box','Wulfsburg','Huntsman Pack','Green Horde','Friends and Foes','Horde Box','Stranger Things','Ultimate','Special Guest'];
+  const SURV_SET_ORDER = ['Black Plague','Wulfsburg','Hero Box','Huntsman Pack','Green Horde','Friends and Foes','Horde Box','Stranger Things','Ultimate','Special Guest'];
   const rawSets = [...new Set(SURVIVORS.map(s => s.set))];
   const sets = rawSets.sort((a,b)=>{
     const ai=SURV_SET_ORDER.findIndex(s=>a.startsWith(s));
