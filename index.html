@@ -520,6 +520,7 @@ body{font-family:'Crimson Text',serif;background:var(--darker);color:var(--text-
     <button class="modal-close" onclick="closeCardModal()">×</button>
     <div style="margin-top:8px;text-align:center">
       <div id="card-modal-imgs" style="display:flex;gap:8px;justify-content:center;align-items:flex-start"></div>
+      <div id="card-modal-toggle" style="margin-top:12px"></div>
     </div>
   </div>
 </div>
@@ -537,11 +538,38 @@ function openSkillModal(e,name,level){e.stopPropagation();document.getElementByI
   if(/^Collector:/i.test(name)) return SKILL_DESCRIPTIONS['Collector: [Zombie type]'];
   if(/^Ironclad:/i.test(name)) return SKILL_DESCRIPTIONS['Ironclad: [Zombie type]'];
   if(/^Starts with/i.test(name)) return SKILL_DESCRIPTIONS['Starts with [Equipment]'];
+  if(/^Guards:/i.test(name)) return SKILL_DESCRIPTIONS['Guards: [Skill]'];
+  if(/^Range 2\+:/i.test(name)) return SKILL_DESCRIPTIONS['Range 2+: [Skill]'];
   return null;
 })();document.getElementById('modal-desc-en').textContent=desc?desc.en:'— Descrizione non ancora caricata —';document.getElementById('modal-desc-it').textContent=desc?desc.it:'— Description not yet loaded —';document.getElementById('skill-modal').classList.add('open');}
 function closeSkillModal(){document.getElementById('skill-modal').classList.remove('open');}
-function openCardModal(e,id){e.stopPropagation();const s=SURVIVORS.find(x=>x.id===id);if(!s||!s.card)return;const cont=document.getElementById('card-modal-imgs');cont.innerHTML=`<img src="${s.card}" alt="${s.name}" style="max-width:100%;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.6)">`;document.getElementById('card-modal').classList.add('open');}
-function closeCardModal(){document.getElementById('card-modal').classList.remove('open');}
+function openCardModal(e,id){
+  e.stopPropagation();
+  const s=SURVIVORS.find(x=>x.id===id);
+  if(!s||!s.card)return;
+  S._cardModalSurvivor=s;
+  S._cardModalShowingCampagna=false;
+  renderCardModalImage();
+  document.getElementById('card-modal').classList.add('open');
+}
+function renderCardModalImage(){
+  const s=S._cardModalSurvivor;
+  if(!s)return;
+  const showCamp=S._cardModalShowingCampagna&&s.cardCampagna;
+  const src=showCamp?s.cardCampagna:s.card;
+  document.getElementById('card-modal-imgs').innerHTML=`<img src="${src}" alt="${s.name}" style="max-width:100%;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.6)">`;
+  const toggleEl=document.getElementById('card-modal-toggle');
+  if(s.cardCampagna){
+    toggleEl.innerHTML=`<div class="set-chip active" style="display:inline-block;cursor:pointer" onclick="toggleCardModalCampagna()">${showCamp?'← Versione Standard':'Versione Campagna →'}</div>`;
+  }else{
+    toggleEl.innerHTML='';
+  }
+}
+function toggleCardModalCampagna(){
+  S._cardModalShowingCampagna=!S._cardModalShowingCampagna;
+  renderCardModalImage();
+}
+function closeCardModal(){document.getElementById('card-modal').classList.remove('open');S._cardModalSurvivor=null;S._cardModalShowingCampagna=false;}
 
 function renderCapacita(filter){const f=(filter||'').toLowerCase().trim();const list=document.getElementById('capacita-list');const entries=Object.entries(SKILL_DESCRIPTIONS).filter(([n])=>n.toLowerCase().includes(f)).sort((a,b)=>a[0].localeCompare(b[0]));if(!entries.length){list.innerHTML='<div style="text-align:center;color:rgba(245,232,208,0.4);padding:20px;font-family:Cinzel,serif;font-size:12px">Nessuna capacità trovata</div>';return;}list.innerHTML=entries.map(([name,desc])=>{const sid=name.replace(/[^a-zA-Z0-9]/g,'_');return`<div class="capacita-item" onclick="toggleCapacita('${sid}')"><div class="capacita-header"><span class="capacita-name">${name}</span><span class="capacita-arrow" id="arr-${sid}">▸</span></div><div class="capacita-body" id="cap-${sid}" style="display:none"><div class="capacita-en">${desc.en}</div><div class="capacita-it">${desc.it}</div></div></div>`;}).join('');}
 function toggleCapacita(sid){const body=document.getElementById('cap-'+sid);const arr=document.getElementById('arr-'+sid);if(!body)return;const open=body.style.display==='none';body.style.display=open?'block':'none';if(arr)arr.textContent=open?'▾':'▸';}
@@ -549,7 +577,7 @@ function toggleCapacita(sid){const body=document.getElementById('cap-'+sid);cons
 const S={players:3,draw:3,keep:2,activeSets:[],availableSets:[],pool:[],takenIds:new Set(),currentPlayerIndex:0,currentDraw:[],selectedIds:[],freePickSurvivor:null,playerResults:[],_tempFreePickId:null,_fpSetFilter:null,includeSansMin:false,fpIncludeSansMin:false};
 function encodeId(s){return s.replace(/[^a-zA-Z0-9]/g,'_');}
 function initSets(){
-  const SETUP_SET_ORDER=['Black Plague','Wulfsburg','Hero Box','Huntsman Pack','Green Horde','Friends and Foes','Horde Box','Stranger Things','Ultimate','Special Guest'];
+  const SETUP_SET_ORDER=['Black Plague','Wulfsburg','Hero Box','Huntsman Pack','Green Horde','Friends and Foes','Horde Box','Stranger Things','Ultimate','Promo','Special Guest','White Death','Eternal Empire','TMN Turtles'];
   const rawSets=[...new Set(SURVIVORS.map(s=>s.set))];
   const sets=rawSets.sort((a,b)=>{const ai=SETUP_SET_ORDER.findIndex(x=>a.startsWith(x));const bi=SETUP_SET_ORDER.findIndex(x=>b.startsWith(x));return(ai===-1?99:ai)-(bi===-1?99:bi);});
   S.availableSets=sets;S.activeSets=[...sets];
@@ -604,7 +632,7 @@ function toggleSkills(e,id){e.stopPropagation();const el=document.getElementById
 function showFreePick(){S._tempFreePickId=null;S._fpSetFilter=null;S.fpIncludeSansMin=S.includeSansMin;document.getElementById('free-pick-search').value='';showScreen('screen-freepick');renderFpSetChips();renderFreePickGrid('');}
 function toggleFpSansMin(){S.fpIncludeSansMin=!S.fpIncludeSansMin;renderFpSetChips();renderFreePickGrid(document.getElementById('free-pick-search').value);}
 function renderFpSetChips(){
-  const FP_SET_ORDER=['Black Plague','Wulfsburg','Hero Box','Huntsman Pack','Green Horde','Friends and Foes','Horde Box','Stranger Things','Ultimate','Special Guest'];
+  const FP_SET_ORDER=['Black Plague','Wulfsburg','Hero Box','Huntsman Pack','Green Horde','Friends and Foes','Horde Box','Stranger Things','Ultimate','Promo','Special Guest','White Death','Eternal Empire','TMN Turtles'];
   const sorted=[...S.activeSets].sort((a,b)=>{const ai=FP_SET_ORDER.findIndex(s=>a.startsWith(s));const bi=FP_SET_ORDER.findIndex(s=>b.startsWith(s));return(ai===-1?99:ai)-(bi===-1?99:bi);});
   document.getElementById('fp-set-chips').innerHTML=sorted.map(s=>`<div class="set-chip ${S._fpSetFilter===s?'active':''}" onclick="toggleFpSet('${encodeId(s)}')">${s}</div>`).join('')
   +`<div class="set-chip ${S.fpIncludeSansMin?'active':''}" style="border-color:rgba(139,0,0,0.5)" onclick="toggleFpSansMin()">Senza miniatura</div>`;updateFpSetsBadge();
@@ -885,7 +913,7 @@ let surv_setFilter = null;
 let surv_showSansMin = true;
 
 function initSopravvissuti() {
-  const SURV_SET_ORDER = ['Black Plague','Wulfsburg','Hero Box','Huntsman Pack','Green Horde','Friends and Foes','Horde Box','Stranger Things','Ultimate','Special Guest'];
+  const SURV_SET_ORDER = ['Black Plague','Wulfsburg','Hero Box','Huntsman Pack','Green Horde','Friends and Foes','Horde Box','Stranger Things','Ultimate','Promo','Special Guest','White Death','Eternal Empire','TMN Turtles'];
   const rawSets = [...new Set(SURVIVORS.map(s => s.set))];
   const sets = rawSets.sort((a,b)=>{
     const ai=SURV_SET_ORDER.findIndex(s=>a.startsWith(s));
